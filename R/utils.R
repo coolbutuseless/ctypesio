@@ -30,14 +30,35 @@ set_endian <- function(con, endian = "little") {
   con
 }
 
+get_endian_method <- function(con, endian) {
+  endian <- endian %||% 
+    attr(con, "endian", exact = TRUE) %||%
+    "little"
+  stopifnot(endian %in% c("big", "little"))
+  endian
+}
+
+
+promote_methods <- c("dbl", "hex", "raw", "bitstring")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Tag a connection with the preferred integer promotion method
+#' Tag a connection with the preferred integer promotion method for types
+#' larger that R's integer type i.e. uint32, uint64, int64
 #' 
 #' @inheritParams read_uint8
 #' 
 #' @param promote Default method of promotion for uint32, uint64 and int64.
-#'        One of: dbl, raw, bitstring. Default: 'dbl'
+#'        One of: 'dbl', 'hex', 'raw', 'bitstring.' Default: 'dbl'
+#'        \describe{
+#'          \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
+#'          will lose precision}
+#'          \item{\code{hex}}{Each integer is returned as a 16-character 
+#'          hexadecimal string}
+#'          \item{\code{raw}}{A single raw vector containing all the integers 
+#'          in their original form}
+#'          \item{\code{bitstring}}{Integers are converted to bitstrings i.e.
+#'          character strings containing only the characters "0" and "1"}
+#'        }
 #'        
 #' @return Modified connection object
 #' @examples
@@ -46,14 +67,22 @@ set_endian <- function(con, endian = "little") {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set_integer_promotion <- function(con, promote = 'dbl') {
-  stopifnot(promote %in% c('dbl', 'raw', 'bitstring'))
+  stopifnot(promote %in% promote_methods)
   attr(con, "promote") <- promote
   con
 }
 
 
+get_promote_method <- function(con, promote) {
+  promote <- promote %||% 
+    attr(con, "promote", exact = TRUE) %||%
+    "dbl"
+  stopifnot(promote %in% promote_methods)
+  promote
+}
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Check bounds on values about to be written fit into given type
+#' For this connection, set the response when values do not fit into given type before writing.
 #' 
 #' @inheritParams read_uint8
 #' @param bounds_check Default bounds checking behaviour. One of: ignore, warn, error.
@@ -67,13 +96,22 @@ set_integer_promotion <- function(con, promote = 'dbl') {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set_bounds_check <- function(con, bounds_check = 'error') {
   stopifnot(bounds_check %in% c('ignore', 'warn', 'error'))
-  attr(con, "bounds_check") <- match(bounds_check, c('ignore', 'warn', 'error')) - 1L
+  attr(con, "bounds_check") <- bounds_check
   con
 }
 
 
+get_bounds_check_method <- function(con, bounds_check) {
+  bounds_check <- bounds_check %||% 
+    attr(con, "bounds_check", exact = TRUE) %||%
+    "error"
+  stopifnot(bounds_check %in% c("ignore", "warn", "error"))
+  bounds_check
+}
+
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Set EOF handling
+#' Set EOF handling for this connection
 #' 
 #' @inheritParams read_uint8
 #' @param eof_check ignore, warn, error.  If set to 'warn' then when EOF reached
@@ -87,9 +125,19 @@ set_bounds_check <- function(con, bounds_check = 'error') {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set_eof_check <- function(con, eof_check = 'error') {
   stopifnot(eof_check %in% c('ignore', 'warn', 'error'))
-  attr(con, "eof_check") <- match(eof_check, c('ignore', 'warn', 'error')) - 1L
+  attr(con, "eof_check") <- eof_check
   con
 }
+
+
+get_eof_check_method <- function(con, eof_check) {
+  eof_check <- eof_check %||% 
+    attr(con, "eof_check", exact = TRUE) %||%
+    "error"
+  stopifnot(eof_check %in% c("ignore", "warn", "error"))
+  eof_check
+}
+
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,8 +151,17 @@ set_eof_check <- function(con, eof_check = 'error') {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set_na_check <- function(con, na_check) {
   stopifnot(na_check %in% c('ignore', 'warn', 'error'))
-  attr(con, "na_check") <- match(na_check, c('ignore', 'warn', 'error')) - 1L
+  attr(con, "na_check") <- na_check
   con
+}
+
+
+get_na_check_method <- function(con, na_check) {
+  na_check <- na_check %||% 
+    attr(con, "na_check", exact = TRUE) %||%
+    "error"
+  stopifnot(na_check %in% c("ignore", "warn", "error"))
+  na_check
 }
 
 
@@ -112,20 +169,20 @@ set_na_check <- function(con, na_check) {
 # Standardise the EOF check
 # 
 # This will trigger if:
-#  * 'eof_check' method set to 1 or 2 (warn or stop)
-#  * n items requsted < n items read
+#  * 'eof_check' method set to 'warn' or 'error'
+#  * n items requested < n items read
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 eof_check <- function(con, n_requested, n_read) {
   
   if (length(n_read) == 0) n_read <- 0
   if (length(n_requested) == 1 && length(n_read) == 1 && n_requested == n_read) return();
   
-  method <- attr(con, 'eof_check', exact = TRUE) %||% 2L # default to stop
-  if (method == 0) return();
+  method <- attr(con, 'eof_check', exact = TRUE) %||% 'error' 
+  if (method == 'ignore') return();
   
   msg <- sprintf("EOF reached. Requested %i items, only got %i", n_requested, n_read)
   
-  if (method == 1) {
+  if (method == 'warn') {
     warning(msg)
   } else {
     stop(msg)

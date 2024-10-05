@@ -2,7 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{set_integer_promotion}
 \alias{set_integer_promotion}
-\title{Tag a connection with the preferred integer promotion method}
+\title{Tag a connection with the preferred integer promotion method for types
+larger that R's integer type i.e. uint32, uint64, int64}
 \usage{
 set_integer_promotion(con, promote = "dbl")
 }
@@ -12,13 +13,24 @@ set_integer_promotion(con, promote = "dbl")
 functions.}
 
 \item{promote}{Default method of promotion for uint32, uint64 and int64.
-One of: dbl, raw, bitstring. Default: 'dbl'}
+One of: 'dbl', 'hex', 'raw', 'bitstring.' Default: 'dbl'
+\describe{
+  \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
+  will lose precision}
+  \item{\code{hex}}{Each integer is returned as a 16-character 
+  hexadecimal string}
+  \item{\code{raw}}{A single raw vector containing all the integers 
+  in their original form}
+  \item{\code{bitstring}}{Integers are converted to bitstrings i.e.
+  character strings containing only the characters "0" and "1"}
+}}
 }
 \value{
 Modified connection object
 }
 \description{
-Tag a connection with the preferred integer promotion method
+Tag a connection with the preferred integer promotion method for types
+larger that R's integer type i.e. uint32, uint64, int64
 }
 \examples{
 con <- textConnection("hello")

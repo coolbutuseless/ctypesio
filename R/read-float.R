@@ -29,7 +29,7 @@
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_f64 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'double', n = n, size = 8, endian = endian)
   
@@ -43,7 +43,7 @@ read_f64 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_f32 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'double', n = n, size = 4, endian = endian)
   
@@ -57,7 +57,7 @@ read_f32 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_f16 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   raw_vec <- readBin(con, 'raw', n = 2 * n, size = 1)
   res <- chalf_to_rdbl(raw_vec, endian)
@@ -71,7 +71,7 @@ read_f16 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_bfloat <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   raw_vec <- readBin(con, 'raw', n = 2 * n, size = 1)
   res <- bfloat_to_rdbl(raw_vec, endian)

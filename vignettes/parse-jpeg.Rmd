@@ -168,14 +168,14 @@ con <- file(jpeg_file, 'rb') |>
 # Read the first 2 bytes as HEX
 # For regular JPEG files, this should be the "Start of Image (SOI)" marker
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-soi <- read_hex(con, 2) # ffd8: SOI
+soi <- read_hex(con, n = 1, size = 2) # ffd8: SOI
 stopifnot(soi == 'ffd8')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Keep reading markers and the chunk data until we reach
 # the 'Start of Scan' marker (ffda)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-marker <- read_hex(con, 2)
+marker <- read_hex(con, n = 1, size = 2)
 
 while(length(marker) > 0 && nchar(marker) > 0) {
   
@@ -186,7 +186,7 @@ while(length(marker) > 0 && nchar(marker) > 0) {
   # in my list of markers
   if (nrow(info) == 0) {
     cat("Unknown marker: ", marker, "\n")
-    marker <- read_hex(con, 2)
+    marker <- read_hex(con, n = 1, size = 2)
     next
   }
   
@@ -210,7 +210,7 @@ while(length(marker) > 0 && nchar(marker) > 0) {
   
   
   # Read the next marker and continue
-  marker <- read_hex(con, 2)
+  marker <- read_hex(con, n = 1, size = 2)
 }
 
 close(con)

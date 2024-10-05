@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{set_bounds_check}
 \alias{set_bounds_check}
-\title{Check bounds on values about to be written fit into given type}
+\title{For this connection, set the response when values do not fit into given type before writing.}
 \usage{
 set_bounds_check(con, bounds_check = "error")
 }
@@ -18,7 +18,7 @@ Default: error}
 Modified connection object
 }
 \description{
-Check bounds on values about to be written fit into given type
+For this connection, set the response when values do not fit into given type before writing.
 }
 \examples{
 con <- textConnection("hello")

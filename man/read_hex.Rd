@@ -4,7 +4,7 @@
 \alias{read_hex}
 \title{Read raw bytes as a single hexadecimal string}
 \usage{
-read_hex(con, n = 1, endian = NULL)
+read_hex(con, n = 1, size = 1, endian = NULL)
 }
 \arguments{
 \item{con}{Connection object created with \code{file()}, \code{url()}, 
@@ -12,6 +12,8 @@ read_hex(con, n = 1, endian = NULL)
 functions.}
 
 \item{n}{Number of elements to read. Default: 1}
+
+\item{size}{size in bytes of each element to read. Default: 1}
 
 \item{endian}{Ordering of bytes within the file when reading multi-byte values.
 Possible values: 'big' or 'little'.  
@@ -28,6 +30,14 @@ Read raw bytes as a single hexadecimal string
 }
 \examples{
 con <- rawConnection(as.raw(1:4))
-read_hex(con, 4)
+read_hex(con, n = 4, size = 1)
+close(con)
+
+con <- rawConnection(as.raw(1:4))
+read_hex(con, n = 1, size = 4)
+close(con)
+
+con <- rawConnection(as.raw(1:4))
+read_hex(con, n = 2, size = 2, endian = "big")
 close(con)
 }

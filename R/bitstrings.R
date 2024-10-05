@@ -76,19 +76,19 @@ byte_to_bitstring <- c(
 #' Convert a raw vector to bitstrings
 #' 
 #' @param raw_vec multiple of 8 byte values
-#' @param n bytes per bitstring. default: 8
+#' @param size bytes per bitstring. default: 8
 #' @param endian Default: little
 #' 
 #' @return vector of bitstrings (character)
 #' @noRd
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-raw_to_bitstrings <- function(raw_vec, n = 8, endian = 'little') {
+raw_to_bitstrings <- function(raw_vec, size = 8, endian = 'little') {
   
-    stopifnot(length(raw_vec) %% n == 0)
+    stopifnot(length(raw_vec) %% size == 0)
     ints <- as.integer(raw_vec)
     
     strs <- byte_to_bitstring[ints + 1L]
-    dim(strs) <- c(n, length(strs)/n)
+    dim(strs) <- c(size, length(strs)/size)
     
     if (endian == 'little') {
       # Reverse the string ordering
@@ -150,7 +150,7 @@ bitstrings_to_raw <- function(bitstrings, endian = 'little') {
 if (FALSE) {
 
   as.raw(1:8)  
-  raw_to_bitstrings(as.raw(1:8), n = 8) 
+  raw_to_bitstrings(as.raw(1:8), size = 8) 
   
   
   8 * 256^7 + 
@@ -162,11 +162,11 @@ if (FALSE) {
     2 * 256^1 + 
     1 * 256^0
   
-  raw_to_bitstrings(as.raw(1:8), n = 8) |>
+  raw_to_bitstrings(as.raw(1:8), size = 8) |>
     bit64::as.integer64.bitstring()
   
   
-  raw_to_bitstrings(as.raw(1:16), n = 8, endian = 'big') |>
+  raw_to_bitstrings(as.raw(1:16), size = 8, endian = 'big') |>
     bitstrings_to_raw()
 }
 

@@ -7,7 +7,7 @@ test_that("bitstring roundtrip works", {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # as 64 bits
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  res <- raw_to_bitstrings(raw_vec, 8)
+  res <- raw_to_bitstrings(raw_vec, size = 8)
   expect_length(res, 2)
   res <- bitstrings_to_raw(res)
   expect_identical(res, raw_vec)
@@ -16,7 +16,7 @@ test_that("bitstring roundtrip works", {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # As 32 bits
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  res <- raw_to_bitstrings(raw_vec, 4)
+  res <- raw_to_bitstrings(raw_vec, size = 4)
   expect_length(res, 4)
   res <- bitstrings_to_raw(res)
   expect_identical(res, raw_vec)
@@ -25,7 +25,7 @@ test_that("bitstring roundtrip works", {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # As 16 bits
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  res <- raw_to_bitstrings(raw_vec, 2)
+  res <- raw_to_bitstrings(raw_vec, size = 2)
   expect_length(res, 8)
   res <- bitstrings_to_raw(res)
   expect_identical(res, raw_vec)
@@ -35,7 +35,7 @@ test_that("bitstring roundtrip works", {
   # Twiddle the endianness
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   raw_vec <- as.raw(1:2)
-  res <- raw_to_bitstrings(raw_vec, 2, endian = 'big')
+  res <- raw_to_bitstrings(raw_vec, size = 2, endian = 'big')
   expect_length(res, 1)
   res <- bitstrings_to_raw(res, endian = 'big')
   expect_identical(res, raw_vec)
@@ -44,7 +44,7 @@ test_that("bitstring roundtrip works", {
   # Twiddle the endianness
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   raw_vec <- as.raw(1:2)
-  res <- raw_to_bitstrings(raw_vec, 2, endian = 'big')
+  res <- raw_to_bitstrings(raw_vec, size = 2, endian = 'big')
   expect_length(res, 1)
   res <- bitstrings_to_raw(res, endian = 'little')
   expect_identical(res, rev(raw_vec))
@@ -53,7 +53,7 @@ test_that("bitstring roundtrip works", {
   # Twiddle the endianness
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   raw_vec <- as.raw(1:2)
-  res <- raw_to_bitstrings(raw_vec, 2, endian = 'little')
+  res <- raw_to_bitstrings(raw_vec, size = 2, endian = 'little')
   expect_length(res, 1)
   res <- bitstrings_to_raw(res, endian = 'big')
   expect_identical(res, rev(raw_vec))

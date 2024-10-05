@@ -42,7 +42,7 @@ dbl_to_int <- function(x, type, endian = "little") {
 #' @param x vector to write
 #' @param signed Logical.  Signed value?
 #' @param width width of type in bytes.
-#' @param bounds_check check values lie within bounds. Default: 2 (stop)
+#' @param bounds_check check values lie within bounds. Default: "error"
 #' @return raw vector
 #' @noRd
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,8 +51,8 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Figure out 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  endian       <- endian       %||% attr(con, 'endian'      , exact = TRUE) %||% "little"
-  bounds_check <- bounds_check %||% attr(con, 'bounds_check', exact = TRUE) %||% 2L
+  endian <- get_endian_method(con, endian)
+  bounds_check <- get_bounds_check_method(con, bounds_check)
 
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,7 +77,7 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
   #    1 = warning
   #    2 = error
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (bounds_check > 0) {
+  if (bounds_check != "ignore") {
     
     lo <- ifelse(signed, signed_lo[width], unsigned_lo[width])
     hi <- ifelse(signed, signed_hi[width], unsigned_hi[width])
@@ -86,7 +86,7 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
     if (any(x < lo) || any(x > hi)) {
       bad_vals <- x[x < lo | x > hi]
       message <- sprintf("Out of bounds [%i, %i] : %s", lo, hi, deparse1(bad_vals))
-      if (bounds_check == 1) {
+      if (bounds_check == "warn") {
         warning(message)
       } else {
         stop(message)

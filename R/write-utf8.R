@@ -10,10 +10,41 @@
 #' @examples
 #' con <- file(tempfile(), "wb")
 #' write_raw(con, as.raw(1:4))
+#' write_raw(con, 1:4) 
 #' close(con)
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_raw <- function(con, x) {
+write_raw <- function(con, x, bounds_check = NULL) {
+  
+  if (is.integer(x)) {
+    bounds_check <- get_bounds_check_method(con, bounds_check)
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Bound check
+    #    0 = ignore
+    #    1 = warning
+    #    2 = error
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (bounds_check != "ignore") {
+      
+      lo <- 0
+      hi <- 255
+      
+      
+      if (any(x < lo) || any(x > hi)) {
+        bad_vals <- x[x < lo | x > hi]
+        message <- sprintf("Out of bounds [%i, %i] : %s", lo, hi, deparse1(bad_vals))
+        if (bounds_check == "warn") {
+          warning(message)
+        } else {
+          stop(message)
+        }
+      }
+    }
+    
+    x <- as.raw(x)
+  }
+  
   stopifnot(is.raw(x))
   writeBin(x, con)
   

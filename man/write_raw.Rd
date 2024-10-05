@@ -4,7 +4,7 @@
 \alias{write_raw}
 \title{Write raw bytes}
 \usage{
-write_raw(con, x)
+write_raw(con, x, bounds_check = NULL)
 }
 \arguments{
 \item{con}{Connection object created with \code{file()}, \code{url()}, 
@@ -12,6 +12,12 @@ write_raw(con, x)
 functions.}
 
 \item{x}{vector to write}
+
+\item{bounds_check}{Check values lie within bounds of the given type.
+Default: NULL indicates that
+this option should be retrieved from the connection object if possible
+(where the user has used \code{set_bounds_check()}) or otherwise 
+will be set to \code{"error"}}
 }
 \value{
 The original connection is returned invisibly.
@@ -22,5 +28,6 @@ Write raw bytes
 \examples{
 con <- file(tempfile(), "wb")
 write_raw(con, as.raw(1:4))
+write_raw(con, 1:4) 
 close(con)
 }

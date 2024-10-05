@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{set_eof_check}
 \alias{set_eof_check}
-\title{Set EOF handling}
+\title{Set EOF handling for this connection}
 \usage{
 set_eof_check(con, eof_check = "error")
 }
@@ -18,7 +18,7 @@ any further reads will spark a warning only.}
 Modified connection object
 }
 \description{
-Set EOF handling
+Set EOF handling for this connection
 }
 \examples{
 con <- textConnection("hello")

@@ -139,13 +139,13 @@ con <- file(jpeg_file, 'rb') |>
 # Read the first 2 bytes as HEX
 # For JPEG files, this should be the "Start of Image (SOI)" marker "ffd8"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-soi <- read_hex(con, 2) 
+soi <- read_hex(con, n = 1, size = 2) 
 stopifnot(soi == 'ffd8')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Next marker should be start of JFIF.  Marker hex = 'ffe0'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-marker <- read_hex(con, 2)
+marker <- read_hex(con, n = 1, size = 2)
 stopifnot(marker == 'ffe0')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -164,11 +164,9 @@ stopifnot(marker == 'ffe0')
 list(
   length   = read_uint16(con),
   jfif     = read_str(con),
-  major    = read_uint8(con),
-  minor    = read_uint8(con),
-  density  = read_uint8(con),
-  xdensity = read_uint16(con),
-  ydensity = read_uint16(con)
+  version  = read_uint8(con, 2),
+  units    = c('', 'PPI', 'PPcm')[read_uint8(con) + 1],
+  density = read_uint16(con, 2)
 )
 ```
 
@@ -178,20 +176,14 @@ list(
     #> $jfif
     #> [1] "JFIF"
     #> 
-    #> $major
-    #> [1] 1
+    #> $version
+    #> [1] 1 1
     #> 
-    #> $minor
-    #> [1] 1
+    #> $units
+    #> [1] "PPI"
     #> 
     #> $density
-    #> [1] 1
-    #> 
-    #> $xdensity
-    #> [1] 300
-    #> 
-    #> $ydensity
-    #> [1] 300
+    #> [1] 300 300
 
 This information reveals that the JPEG is:
 

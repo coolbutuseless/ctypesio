@@ -49,7 +49,7 @@
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint8 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'integer', n = n, size = 1, endian = endian, signed = FALSE)
   
@@ -63,7 +63,7 @@ read_uint8 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_int8 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'integer', n = n, size = 1, endian = endian, signed = TRUE)
   
@@ -77,7 +77,7 @@ read_int8 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_int16 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'integer', n = n, size = 2, endian = endian, signed = TRUE)
   
@@ -90,7 +90,7 @@ read_int16 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint16 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'integer', n = n, size = 2, endian = endian, signed = FALSE)
   
@@ -104,7 +104,7 @@ read_uint16 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_int32 <- function(con, n = 1, endian = NULL) {
-  endian <- endian %||% attr(con, 'endian') %||% "little"
+  endian <- get_endian_method(con, endian)
   
   res <- readBin(con, 'integer', n = n, size = 4, endian = endian, signed = TRUE)
   
@@ -117,20 +117,20 @@ read_int32 <- function(con, n = 1, endian = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
-  endian  <- endian  %||% attr(con, 'endian' , TRUE) %||% "little"
-  promote <- promote %||% attr(con, 'promote', TRUE) %||% 'dbl'
+  endian <- get_endian_method(con, endian)
+  promote <- get_promote_method(con, promote)
   
   raw_vec <- readBin(con, 'raw', n = n * 4, size = 1)
+  eof_check(con, n * 4, length(raw_vec))
   
   if (promote == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint32', endian == 'big')
-    eof_check(con, n, length(res))
   } else if (promote == 'raw') {
     res <- raw_vec
-    eof_check(con, n * 4, length(res))
+  } else if (promote == 'hex') {
+    res <- raw_to_hex(raw_vec, size = 4, endian = endian)
   } else if (promote == 'bitstring') {
-    res <- raw_to_bitstrings(raw_vec, n = 4, endian = endian)
-    eof_check(con, n, length(res))
+    res <- raw_to_bitstrings(raw_vec, size = 4, endian = endian)
   }  else {
     stop("Unknown promotion method: ", promote)
   }
@@ -144,17 +144,20 @@ read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_int64 <- function(con, n = 1, endian = NULL, promote = NULL) {
-  endian  <- endian  %||% attr(con, 'endian' , TRUE) %||% "little"
-  promote <- promote %||% attr(con, 'promote', TRUE) %||% 'dbl'
+  endian <- get_endian_method(con, endian)
+  promote <- get_promote_method(con, promote)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
+  eof_check(con, n * 8, length(raw_vec))
   
   if (promote == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'int64', endian == 'big')
-    eof_check(con, n, length(res))
   } else if (promote == 'raw') {
     res <- raw_vec
-    eof_check(con, n * 8, length(res))
+  } else if (promote == 'hex') {
+    res <- raw_to_hex(raw_vec, size = 8, endian = endian)
+  } else if (promote == 'bitstring') {
+    res <- raw_to_bitstrings(raw_vec, size = 8, endian = endian)
   } else {
     stop("Unknown promotion method: ", promote)
   }
@@ -168,20 +171,20 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL) {
-  endian  <- endian  %||% attr(con, 'endian' , TRUE) %||% "little"
-  promote <- promote %||% attr(con, 'promote', TRUE) %||% 'dbl'
+  endian <- get_endian_method(con, endian)
+  promote <- get_promote_method(con, promote)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
+  eof_check(con, n * 8, length(raw_vec))
   
   if (promote  == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint64', endian == 'big')
-    eof_check(con, n, length(res))
   } else if (promote == 'raw') {
     res <- raw_vec
-    eof_check(con, n * 8, length(res))
+  } else if (promote == 'hex') {
+    res <- raw_to_hex(raw_vec, size = 8, endian = endian)
   } else if (promote == 'bitstring') {
-    res <- raw_to_bitstrings(raw_vec, n = 8, endian = endian)
-    eof_check(con, n, length(res))
+    res <- raw_to_bitstrings(raw_vec, size = 8, endian = endian)
   } else {
     stop("Unknown promotion method: ", promote)
   }
@@ -189,4 +192,24 @@ read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL) {
   
   res
 }
+
+
+if (FALSE) {
+  
+  con <- rawConnection(as.raw(1:255))
+  read_uint32(con, n = 4, promote = 'hex')
+  close(con)
+  
+}
+
+
+
+
+
+
+
+
+
+
+
 

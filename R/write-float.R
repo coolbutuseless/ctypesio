@@ -15,7 +15,7 @@
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_f64 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  endian       <- endian       %||% attr(con, 'endian'      , exact = TRUE) %||% "little"
+  endian <- get_endian_method(con, endian)
   
   x <- as.double(x)
   
@@ -37,8 +37,8 @@ write_double <- write_f64
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_f32 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  endian       <- endian       %||% attr(con, 'endian'      , exact = TRUE) %||% "little"
-  bounds_check <- bounds_check %||% attr(con, 'bounds_check', exact = TRUE) %||% 2L
+  endian <- get_endian_method(con, endian)
+  bounds_check <- get_bounds_check_method(con, bounds_check)
   
   x <- as.double(x)
   
@@ -48,7 +48,7 @@ write_f32 <- function(con, x, endian = NULL, bounds_check = NULL) {
   #    1 = warning
   #    2 = error
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (bounds_check > 0) {
+  if (bounds_check != "ignore") {
     
     lo <- -3.40282347E+38
     hi <-  3.40282347E+38
@@ -56,7 +56,7 @@ write_f32 <- function(con, x, endian = NULL, bounds_check = NULL) {
     if (any(x < lo) || any(x > hi)) {
       bad_vals <- x[x < lo | x > hi]
       message <- sprintf("Out of bounds [%f, %f] : %s", lo, hi, deparse1(bad_vals))
-      if (bounds_check == 1) {
+      if (bounds_check == "warn") {
         warning(message)
       } else {
         stop(message)
@@ -81,8 +81,8 @@ write_single <- write_f32
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_f16 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  endian       <- endian       %||% attr(con, 'endian'      , exact = TRUE) %||% "little"
-  bounds_check <- bounds_check %||% attr(con, 'bounds_check', exact = TRUE) %||% 2L
+  endian <- get_endian_method(con, endian)
+  bounds_check <- get_bounds_check_method(con, bounds_check)
   
   x <- as.double(x)
   
@@ -92,7 +92,7 @@ write_f16 <- function(con, x, endian = NULL, bounds_check = NULL) {
   #    1 = warning
   #    2 = error
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (bounds_check > 0) {
+  if (bounds_check != "ignore") {
     
     lo <- -65504
     hi <-  65504
@@ -100,7 +100,7 @@ write_f16 <- function(con, x, endian = NULL, bounds_check = NULL) {
     if (any(x < lo) || any(x > hi)) {
       bad_vals <- x[x < lo | x > hi]
       message <- sprintf("Out of bounds [%f, %f] : %s", lo, hi, deparse1(bad_vals))
-      if (bounds_check == 1) {
+      if (bounds_check == "warn") {
         warning(message)
       } else {
         stop(message)

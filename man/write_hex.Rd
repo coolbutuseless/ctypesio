@@ -28,6 +28,6 @@ Write hexadecimal string as raw bytes
 }
 \examples{
 con <- file(tempfile(), "wb")
-write_hex(con, "ff80")
+write_hex(con, c("ff80", "0102"))
 close(con)
 }
