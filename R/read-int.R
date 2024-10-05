@@ -1,0 +1,192 @@
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' Read integer data from a connection
+#' 
+#' Read integer values into a standard R vector of integers or alternate
+#' containers for large types
+#' 
+#' \describe{
+#'   \item{8-bit integers}{\code{read_int8()} and \code{read_uint8()}}
+#'   \item{16-bit integers}{\code{read_int16()} and \code{read_uint16()}}
+#'   \item{32-bit integers}{\code{read_int32()} and \code{read_uint32()}}
+#'   \item{64-bit integers}{\code{read_int64()} and \code{read_uint64()}}
+#' }
+#' 
+#' @param con Connection object created with \code{file()}, \code{url()}, 
+#'        \code{rawConnection()} or any of the other many connection creation
+#'        functions.
+#' @param endian Ordering of bytes within the file when reading multi-byte values.
+#'        Possible values: 'big' or 'little'.  
+#'        Default: NULL indicates that
+#'        endian option should be retrieved from the connection object if possible
+#'        (where the user has used \code{set_endian()}) or otherwise 
+#'        will be set to \code{"little"}
+#' @param n Number of elements to read. Default: 1
+#' @param promote How should integer types be promoted when the type contains
+#'        values larger than R's signed integer type. Possible options 'dbl', 'raw', 'bitstring'.
+#'        Default: NULL indicates that
+#'        this option should be retrieved from the connection object if possible
+#'        (where the user has used \code{set_integer_promotion()}) or otherwise 
+#'        will be set to \code{"dbl"}.
+#'        \describe{
+#'          \item{\code{dbl}}{Read integer values as double precision floating point}
+#'          \item{\code{raw}}{Read integer value as a sequence of raw bytes}
+#'          \item{\code{bitstring}}{Read integer value as a string containing 
+#'                only the characters "0" and "1"}
+#'        }
+#' @return Integer data. Usually in standard R integer vector but depending on 
+#'         the \code{promote} option may be returned in alternate formats
+#' @examples
+#' # Raw vector with 16 bytes (128 bits) of dummy data
+#' data <- as.raw(1:16)
+#' con <- rawConnection(data, 'rb')
+#' read_uint8(con, n = 4)
+#' read_uint64(con, n = 1)
+#' close(con)
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_uint8 <- function(con, n = 1, endian = NULL) {
+  endian <- endian %||% attr(con, 'endian') %||% "little"
+  
+  res <- readBin(con, 'integer', n = n, size = 1, endian = endian, signed = FALSE)
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_int8 <- function(con, n = 1, endian = NULL) {
+  endian <- endian %||% attr(con, 'endian') %||% "little"
+  
+  res <- readBin(con, 'integer', n = n, size = 1, endian = endian, signed = TRUE)
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_int16 <- function(con, n = 1, endian = NULL) {
+  endian <- endian %||% attr(con, 'endian') %||% "little"
+  
+  res <- readBin(con, 'integer', n = n, size = 2, endian = endian, signed = TRUE)
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_uint16 <- function(con, n = 1, endian = NULL) {
+  endian <- endian %||% attr(con, 'endian') %||% "little"
+  
+  res <- readBin(con, 'integer', n = n, size = 2, endian = endian, signed = FALSE)
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_int32 <- function(con, n = 1, endian = NULL) {
+  endian <- endian %||% attr(con, 'endian') %||% "little"
+  
+  res <- readBin(con, 'integer', n = n, size = 4, endian = endian, signed = TRUE)
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
+  endian  <- endian  %||% attr(con, 'endian' , TRUE) %||% "little"
+  promote <- promote %||% attr(con, 'promote', TRUE) %||% 'dbl'
+  
+  raw_vec <- readBin(con, 'raw', n = n * 4, size = 1)
+  
+  if (promote == 'dbl') {
+    res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint32', endian == 'big')
+    eof_check(con, n, length(res))
+  } else if (promote == 'raw') {
+    res <- raw_vec
+    eof_check(con, n * 4, length(res))
+  } else if (promote == 'bitstring') {
+    res <- raw_to_bitstrings(raw_vec, n = 4, endian = endian)
+    eof_check(con, n, length(res))
+  }  else {
+    stop("Unknown promotion method: ", promote)
+  }
+  
+  res
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_int64 <- function(con, n = 1, endian = NULL, promote = NULL) {
+  endian  <- endian  %||% attr(con, 'endian' , TRUE) %||% "little"
+  promote <- promote %||% attr(con, 'promote', TRUE) %||% 'dbl'
+  
+  raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
+  
+  if (promote == 'dbl') {
+    res <- .Call(convert_cint_to_rdbl_, raw_vec, 'int64', endian == 'big')
+    eof_check(con, n, length(res))
+  } else if (promote == 'raw') {
+    res <- raw_vec
+    eof_check(con, n * 8, length(res))
+  } else {
+    stop("Unknown promotion method: ", promote)
+  }
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL) {
+  endian  <- endian  %||% attr(con, 'endian' , TRUE) %||% "little"
+  promote <- promote %||% attr(con, 'promote', TRUE) %||% 'dbl'
+  
+  raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
+  
+  if (promote  == 'dbl') {
+    res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint64', endian == 'big')
+    eof_check(con, n, length(res))
+  } else if (promote == 'raw') {
+    res <- raw_vec
+    eof_check(con, n * 8, length(res))
+  } else if (promote == 'bitstring') {
+    res <- raw_to_bitstrings(raw_vec, n = 8, endian = endian)
+    eof_check(con, n, length(res))
+  } else {
+    stop("Unknown promotion method: ", promote)
+  }
+  
+  
+  res
+}
+

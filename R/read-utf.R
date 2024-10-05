@@ -1,0 +1,135 @@
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' Read raw bytes
+#'
+#' @inheritParams read_uint8
+#' 
+#' @return raw vector
+#' @examples
+#' con <- rawConnection(charToRaw("hello12.3"))
+#' read_raw(con, 5)
+#' close(con)
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_raw <- function(con, n = 1) {
+  res <- readBin(con, 'raw', n = n, size = 1)
+  
+  eof_check(con, n, length(res))
+  res
+}
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' Read a character string from a connection
+#' 
+#' Read character string from a connection. The string may or may not be 
+#' nul-terminated and extra effort can be expended to read UTF8 strings.
+#' 
+#' 
+#' @inheritParams read_uint8
+#' @param n number of characters to read.
+#' 
+#' @return single character string
+#' @examples
+#' con <- rawConnection(c(charToRaw("hello12.3"), as.raw(0)))
+#' read_str(con)
+#' close(con)
+#' 
+#' con <- rawConnection(charToRaw("hello12.3"))
+#' read_str_raw(con, 5)
+#' close(con)
+#' 
+#' con <- rawConnection(c(charToRaw("hello12.3"), as.raw(0)))
+#' read_utf8(con)
+#' close(con)
+#' 
+#' con <- rawConnection(charToRaw("hello12.3"))
+#' read_utf8_raw(con, 3)
+#' close(con)
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_str <- function(con) {
+  res <- readBin(con, 'character', n = 1, size = 1)
+  
+  eof_check(con, 1, length(res))
+  res
+}
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_str
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_str_raw <- function(con, n) {
+  vec <- read_raw(con, n)
+  res <- rawToChar(vec)
+  
+  eof_check(con, n, nchar(res))
+  res
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_str
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_utf8   <- function(con) {
+  
+  chars <- integer(0)
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Keep reading bytes until we hit a null terminator
+  # then convert the integers to utf8
+  # This is pretty terriblt, but I want to avoid any seek() calls
+  # because - according to "?seek" - support on windows is a bit shit.
+  # Could pre-allocate vector and grow? Good enough for now. Mike 2024-10-05
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ch <- read_uint8(con)
+  while (ch != 0) {
+    chars <- c(chars, ch)
+    ch    <- read_uint8(con)
+    if (length(ch) == 0) {
+      stop("Reached EOF looking for string null terminator")
+    }
+  }
+
+  res <- intToUtf8(chars)
+  
+  eof_check(con, 1, length(res))
+  res
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname read_str
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_utf8_raw <- function(con, n) {
+  raw_vec <- read_raw(con, n = n)
+  
+  # Convert string to UTF-8 and return
+  res <- intToUtf8(as.integer(raw_vec))
+  
+  eof_check(con, 1, length(res))
+  res
+}
+
+
+
+if (FALSE) {
+  
+  con <- rawConnection(charToRaw("hello12.3"))
+  read_str_raw(con, 5)
+  
+}
+
+
+
+
+
+
+
+
+
+

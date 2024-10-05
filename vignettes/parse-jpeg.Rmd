@@ -1,0 +1,234 @@
+---
+title: "Parsing JPEG Markers"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parsing JPEG Markers}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = FALSE,
+  comment = "#>"
+)
+```
+
+# JPEG Overview
+
+A JPEG file is a collection of *markers* which define blocks of data
+in the file.  See [Wikipedia](https://en.wikipedia.org/wiki/JPEG_File_Interchange_Format)
+to get an overview of the file format.
+
+This vignette simply parses out all the headers and prints a 
+description of each one.
+
+## JPEG markers
+
+There is an included table of `jpeg_markers` in this vignette, but only the
+first 15 rows are displayed here.
+
+This data consists of:
+
+* `Hex` the hexadecimal code that is the maker
+* `Marker` the codename for this marker
+* `Name`/`Description` more information about this marker
+
+```{r echo=FALSE}
+jpeg_markers <-  data.frame(
+  stringsAsFactors = FALSE,
+                 Hex = c("FFC0","FFC1","FFC2",
+                         "FFC3","FFC4","FFC5","FFC6","FFC7","FFC8","FFC9",
+                         "FFCA","FFCB","FFCC","FFCD","FFCE","FFCF","FFD0",
+                         "FFD1","FFD2","FFD3","FFD4","FFD5","FFD6","FFD7",
+                         "FFD8","FFD9","FFDA","FFDB","FFDC","FFDD","FFDE",
+                         "FFDF","FFE0","FFE1","FFE2","FFE3","FFE4","FFE5",
+                         "FFE6","FFE7","FFE8","FFE9","FFEA","FFEB",
+                         "FFEC","FFED","FFEE","FFEF","FFF0","FFF1","FFF2",
+                         "FFF3","FFF4","FFF5","FFF6","FFF7","FFF8","FFF9",
+                         "FFFA","FFFB","FFFC","FFFD","FFFE"),
+              Marker = c("SOF0","SOF1","SOF2",
+                         "SOF3","DHT","SOF5","SOF6","SOF7","JPG","SOF9",
+                         "SOF10","SOF11","DAC","SOF13","SOF14","SOF15","RST0",
+                         "RST1","RST2","RST3","RST4","RST5","RST6","RST7",
+                         "SOI","EOI","SOS","DQT","DNL","DRI","DHP",
+                         "EXP","APP0","APP1","APP2","APP3","APP4","APP5",
+                         "APP6","APP7","APP8","APP9","APP10","APP11","APP12",
+                         "APP13","APP14","APP15","JPG0","JPG1","JPG2",
+                         "JPG3","JPG4","JPG5","JPG6","JPG7 SOF48","JPG8 LSE",
+                         "JPG9","JPG10","JPG11","JPG12","JPG13","COM"),
+                Name = c("Start of Frame 0",
+                         "Start of Frame 1","Start of Frame 2","Start of Frame 3",
+                         "Define Huffman Table","Start of Frame 5",
+                         "Start of Frame 6","Start of Frame 7","JPEG Extensions",
+                         "Start of Frame 9","Start of Frame 10","Start of Frame 11",
+                         "Define Arithmetic Coding","Start of Frame 13",
+                         "Start of Frame 14","Start of Frame 15","Restart Marker 0",
+                         "Restart Marker 1","Restart Marker 2",
+                         "Restart Marker 3","Restart Marker 4","Restart Marker 5",
+                         "Restart Marker 6","Restart Marker 7","Start of Image",
+                         "End of Image","Start of Scan","Define Quantization Table",
+                         "Define Number of Lines","Define Restart Interval",
+                         "Define Hierarchical Progression",
+                         "Expand Reference Component","Application Segment 0","Application Segment 1",
+                         "Application Segment 2","Application Segment 3",
+                         "Application Segment 4","Application Segment 5",
+                         "Application Segment 6","Application Segment 7",
+                         "Application Segment 8","Application Segment 9",
+                         "Application Segment 10 PhoTags","Application Segment 11",
+                         "Application Segment 12","Application Segment 13",
+                         "Application Segment 14","Application Segment 15","JPEG Extension 0",
+                         "JPEG Extension 1","JPEG Extension 2",
+                         "JPEG Extension 3","JPEG Extension 4","JPEG Extension 5",
+                         "JPEG Extension 6","JPEG Extension 7 JPEG-LS",
+                         "JPEG Extension 8 JPEG-LS Extension","JPEG Extension 9",
+                         "JPEG Extension 10","JPEG Extension 11","JPEG Extension 12",
+                         "JPEG Extension 13","Comment"),
+         Description = c("Baseline DCT",
+                         "Extended Sequential DCT","Progressive DCT",
+                         "Lossless (sequential)",NA,"Differential sequential DCT",
+                         "Differential progressive DCT","Differential lossless (sequential)",
+                         NA,"Extended sequential DCT, Arithmetic coding",
+                         "Progressive DCT, Arithmetic coding",
+                         "Lossless (sequential), Arithmetic coding",NA,
+                         "Differential sequential DCT, Arithmetic coding",
+                         "Differential progressive DCT, Arithmetic coding",
+                         "Differential lossless (sequential), Arithmetic coding",NA,NA,NA,NA,NA,NA,NA,NA,NA,
+                         NA,NA,NA,"(Not common)",NA,"(Not common)",
+                         "(Not common)",
+                         "JFIF – JFIF JPEG image AVI1 – Motion JPEG (MJPG)",
+                         "EXIF Metadata, TIFF IFD format, JPEG Thumbnail (160×120) Adobe XMP","ICC color profile, FlashPix",
+                         "(Not common) JPS Tag for Stereoscopic JPEG images",
+                         "(Not common)","(Not common)",
+                         "(Not common) NITF Lossles profile","(Not common)","(Not common)","(Not common)",
+                         "(Not common) ActiveObject (multimedia messages / captions)",
+                         "(Not common) HELIOS JPEG Resources (OPI Postscript)",
+                         "Picture Info (older digicams), Photoshop Save for Web: Ducky","Photoshop Save As: IRB, 8BIM, IPTC",
+                         "(Not common)","(Not common)","(Not common)",
+                         "(Not common)","(Not common)","(Not common)",
+                         "(Not common)","(Not common)","(Not common)","Lossless JPEG",
+                         "Lossless JPEG Extension Parameters","(Not common)",
+                         "(Not common)","(Not common)","(Not common)",
+                         "(Not common)",NA)
+  )
+  
+
+
+jpeg_markers$Hex <- tolower(jpeg_markers$Hex)
+
+head(jpeg_markers, 15) |> 
+  knitr::kable()
+```
+
+
+
+## Example JPEG file
+
+```{r}
+library(ctypesio)
+
+jpeg_file <- system.file("img", "Rlogo.jpg", package="jpeg")
+jpeg <- jpeg::readJPEG(jpeg_file)
+plot(as.raster(jpeg))
+```
+
+## What does the binary data in the JPEG look like?
+
+```{r}
+dim(jpeg)
+dat <- readBin(jpeg_file, raw(), n = file.size(jpeg_file)) 
+head(dat, 100)
+```
+
+## Process all chcunks
+
+A JPEG file is just a sequence of chunks.  A chunk consists of
+
+* A *marker* e.g. `ffe0` 
+* A length (unsigned 16 bit integer in big-endian)
+* Data bytes to match the length
+
+The following code first asserts that the JPEG file starts with the "Start of Image" marker `ffd8`, 
+then:
+
+1. Reads the chunk marker (2-byte hex)
+2. Reads the chunk length (unsigned, 16bit integer)
+3. Reads the data for this chunk
+4. Repeats from Step (1) until the "Start of Scan" marker (`ffda`) is found.
+
+```{r}
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Open a connection, and tag the connection such that 
+# values are read in **big endian** by default.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+con <- file(jpeg_file, 'rb') |>
+  set_endian('big')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Read the first 2 bytes as HEX
+# For regular JPEG files, this should be the "Start of Image (SOI)" marker
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+soi <- read_hex(con, 2) # ffd8: SOI
+stopifnot(soi == 'ffd8')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Keep reading markers and the chunk data until we reach
+# the 'Start of Scan' marker (ffda)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+marker <- read_hex(con, 2)
+
+while(length(marker) > 0 && nchar(marker) > 0) {
+  
+  # The relevant row from the 'jpeg_markers' data.frame
+  info <- subset(jpeg_markers, jpeg_markers$Hex == marker)
+  
+  # It's possible there may be custom markers which aren't included
+  # in my list of markers
+  if (nrow(info) == 0) {
+    cat("Unknown marker: ", marker, "\n")
+    marker <- read_hex(con, 2)
+    next
+  }
+  
+  # Read the length of data in this chunk and output the chunk info
+  len <- read_uint16(con)
+  msg <- sprintf("%s [%5i] [%s] [%s] [%s]\n", marker, len, info$Marker, info$Name, info$Description)
+  cat(msg)
+  
+  # Check if we've reached the Start of Scan marker
+  if (marker == 'ffda') {
+    cat("Compressed image data until end of file\n")
+    break
+  }
+  
+  # Read the chunk data 
+  # In JPEG the length of each chunk includes the 2 bytes which specify 
+  # the chunk length, so read len-2 bytes from the current position
+  chunk_data <- read_uint8(con, n = len - 2)
+  
+  # Process chunk data here
+  
+  
+  # Read the next marker and continue
+  marker <- read_hex(con, 2)
+}
+
+close(con)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
