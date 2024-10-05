@@ -46,7 +46,7 @@ Key features:
     * `read_uint8()`, `write_uint8()` etc for reading signed/unsigned 8, 16, 32, 64-bit
       integers
     * For types which don't fit in a standard R integer (e.g. `uint64`) there are options
-      to promote this to double, bitstrings or read as a raw vector
+      to promote this to double, hexadecimal or read as a raw vector
 * Other
     * `read_str()`, `read_str_raw()`, `read_utf8()`, `read_utf8_raw()`, 
        `write_utf8()`, `write_utf8_raw()`
@@ -75,7 +75,7 @@ Key features:
 | 8    | Read/write. Signed/unsigned.                                             | NA                                  |
 | 16   | Read/write. Signed/unsigned.                                             | Yes. Half-precision IEEE and bfloat |
 | 32   | Read/write. Signed/unsigned. (32bit unsigned integer promoted to double) | Yes                                 |
-| 64   | Read/write. Signed/unsigned. with double, bitstrings and raw vectors     | Yes                                 |
+| 64   | Read/write. Signed/unsigned. with double, hex and raw vectors     | Yes                                 |
 
 ## Installation
 

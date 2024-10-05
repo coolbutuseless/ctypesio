@@ -42,16 +42,15 @@ endian option should be retrieved from the connection object if possible
 will be set to \code{"little"}}
 
 \item{promote}{How should integer types be promoted when the type contains
-values larger than R's signed integer type. Possible options 'dbl', 'raw', 'bitstring'.
+values larger than R's signed integer type. Possible options 'dbl', 'raw', 'hex'.
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
 (where the user has used \code{set_integer_promotion()}) or otherwise 
 will be set to \code{"dbl"}.
 \describe{
   \item{\code{dbl}}{Read integer values as double precision floating point}
+  \item{\code{hex}}{Read integers as character vector of hexadecimal strings}
   \item{\code{raw}}{Read integer value as a sequence of raw bytes}
-  \item{\code{bitstring}}{Read integer value as a string containing 
-        only the characters "0" and "1"}
 }}
 }
 \value{

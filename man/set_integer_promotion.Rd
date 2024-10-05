@@ -13,7 +13,7 @@ set_integer_promotion(con, promote = "dbl")
 functions.}
 
 \item{promote}{Default method of promotion for uint32, uint64 and int64.
-One of: 'dbl', 'hex', 'raw', 'bitstring.' Default: 'dbl'
+One of: 'dbl', 'hex', 'raw'. Default: 'dbl'
 \describe{
   \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
   will lose precision}
@@ -21,8 +21,6 @@ One of: 'dbl', 'hex', 'raw', 'bitstring.' Default: 'dbl'
   hexadecimal string}
   \item{\code{raw}}{A single raw vector containing all the integers 
   in their original form}
-  \item{\code{bitstring}}{Integers are converted to bitstrings i.e.
-  character strings containing only the characters "0" and "1"}
 }}
 }
 \value{

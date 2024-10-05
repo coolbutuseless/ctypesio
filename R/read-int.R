@@ -26,16 +26,15 @@
 #'        will be set to \code{"little"}
 #' @param n Number of elements to read. Default: 1
 #' @param promote How should integer types be promoted when the type contains
-#'        values larger than R's signed integer type. Possible options 'dbl', 'raw', 'bitstring'.
+#'        values larger than R's signed integer type. Possible options 'dbl', 'raw', 'hex'.
 #'        Default: NULL indicates that
 #'        this option should be retrieved from the connection object if possible
 #'        (where the user has used \code{set_integer_promotion()}) or otherwise 
 #'        will be set to \code{"dbl"}.
 #'        \describe{
 #'          \item{\code{dbl}}{Read integer values as double precision floating point}
+#'          \item{\code{hex}}{Read integers as character vector of hexadecimal strings}
 #'          \item{\code{raw}}{Read integer value as a sequence of raw bytes}
-#'          \item{\code{bitstring}}{Read integer value as a string containing 
-#'                only the characters "0" and "1"}
 #'        }
 #' @return Integer data. Usually in standard R integer vector but depending on 
 #'         the \code{promote} option may be returned in alternate formats
@@ -129,8 +128,6 @@ read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
     res <- raw_vec
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 4, endian = endian)
-  } else if (promote == 'bitstring') {
-    res <- raw_to_bitstrings(raw_vec, size = 4, endian = endian)
   }  else {
     stop("Unknown promotion method: ", promote)
   }
@@ -156,8 +153,6 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL) {
     res <- raw_vec
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 8, endian = endian)
-  } else if (promote == 'bitstring') {
-    res <- raw_to_bitstrings(raw_vec, size = 8, endian = endian)
   } else {
     stop("Unknown promotion method: ", promote)
   }
@@ -183,8 +178,6 @@ read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL) {
     res <- raw_vec
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 8, endian = endian)
-  } else if (promote == 'bitstring') {
-    res <- raw_to_bitstrings(raw_vec, size = 8, endian = endian)
   } else {
     stop("Unknown promotion method: ", promote)
   }
