@@ -16,11 +16,14 @@ functions.}
 One of: 'dbl', 'hex', 'raw'. Default: 'dbl'
 \describe{
   \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
-  will lose precision}
-  \item{\code{hex}}{Each integer is returned as a 16-character 
+  will lose precision.}
+  \item{\code{hex}}{Each integer is returned as a
   hexadecimal string}
   \item{\code{raw}}{A single raw vector containing all the integers 
   in their original form}
+  \item{\code{bit64}}{Return an \code{integer64} vector compatible with the
+  \code{bit64} package.  Note. \code{integer64} is a \emph{signed} 64-bit
+  integer}
 }}
 }
 \value{

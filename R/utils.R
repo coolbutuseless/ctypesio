@@ -39,7 +39,7 @@ get_endian_method <- function(con, endian) {
 }
 
 
-promote_methods <- c("dbl", "hex", "raw")
+promote_methods <- c("dbl", "hex", "raw", 'bit64')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Tag a connection with the preferred integer promotion method for types
@@ -51,11 +51,14 @@ promote_methods <- c("dbl", "hex", "raw")
 #'        One of: 'dbl', 'hex', 'raw'. Default: 'dbl'
 #'        \describe{
 #'          \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
-#'          will lose precision}
-#'          \item{\code{hex}}{Each integer is returned as a 16-character 
+#'          will lose precision.}
+#'          \item{\code{hex}}{Each integer is returned as a
 #'          hexadecimal string}
 #'          \item{\code{raw}}{A single raw vector containing all the integers 
 #'          in their original form}
+#'          \item{\code{bit64}}{Return an \code{integer64} vector compatible with the
+#'          \code{bit64} package.  Note. \code{integer64} is a \emph{signed} 64-bit
+#'          integer}
 #'        }
 #'        
 #' @return Modified connection object

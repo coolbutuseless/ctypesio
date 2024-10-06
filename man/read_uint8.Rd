@@ -23,9 +23,9 @@ read_int32(con, n = 1, endian = NULL)
 
 read_uint32(con, n = 1, endian = NULL, promote = NULL)
 
-read_int64(con, n = 1, endian = NULL, promote = NULL)
+read_int64(con, n = 1, endian = NULL, promote = NULL, bounds_check = NULL)
 
-read_uint64(con, n = 1, endian = NULL, promote = NULL)
+read_uint64(con, n = 1, endian = NULL, promote = NULL, bounds_check = NULL)
 }
 \arguments{
 \item{con}{Connection object created with \code{file()}, \code{url()}, 
@@ -52,6 +52,12 @@ will be set to \code{"dbl"}.
   \item{\code{hex}}{Read integers as character vector of hexadecimal strings}
   \item{\code{raw}}{Read integer value as a sequence of raw bytes}
 }}
+
+\item{bounds_check}{Check values lie within bounds of the given type.
+Default: NULL indicates that
+this option should be retrieved from the connection object if possible
+(where the user has used \code{set_bounds_check()}) or otherwise 
+will be set to \code{"error"}}
 }
 \value{
 Integer data. Usually in standard R integer vector but depending on 
@@ -71,9 +77,9 @@ containers for large types
 }
 \examples{
 # Raw vector with 16 bytes (128 bits) of dummy data
-data <- as.raw(1:16)
+data <- as.raw(c(1:7, 0, 1:8))
 con <- rawConnection(data, 'rb')
+read_int64(con, n = 1)
 read_uint8(con, n = 4)
-read_uint64(con, n = 1)
 close(con)
 }

@@ -15,6 +15,7 @@
 #'   \item{64-bit integers}{\code{read_int64()} and \code{read_uint64()}}
 #' }
 #' 
+#' @inheritParams write_uint8
 #' @param con Connection object created with \code{file()}, \code{url()}, 
 #'        \code{rawConnection()} or any of the other many connection creation
 #'        functions.
@@ -40,10 +41,10 @@
 #'         the \code{promote} option may be returned in alternate formats
 #' @examples
 #' # Raw vector with 16 bytes (128 bits) of dummy data
-#' data <- as.raw(1:16)
+#' data <- as.raw(c(1:7, 0, 1:8))
 #' con <- rawConnection(data, 'rb')
+#' read_int64(con, n = 1)
 #' read_uint8(con, n = 4)
-#' read_uint64(con, n = 1)
 #' close(con)
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -140,19 +141,37 @@ read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
 #' @rdname read_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-read_int64 <- function(con, n = 1, endian = NULL, promote = NULL) {
+read_int64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check = NULL) {
   endian <- get_endian_method(con, endian)
   promote <- get_promote_method(con, promote)
+  bounds_check <- get_bounds_check_method(con, bounds_check)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
   eof_check(con, n * 8, length(raw_vec))
   
   if (promote == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'int64', endian == 'big')
+    if (bounds_check != 'ignore') {
+      lo <- -(2^53)
+      hi <-   2^53
+      
+      if (any(res < lo) || any(res > hi)) {
+        bad_vals <- res[res < lo | res > hi]
+        message <- sprintf("Out of bounds for promotion to 'double' [-(2^53), 2^53] : %s", deparse1(bad_vals))
+        if (bounds_check == "warn") {
+          warning(message)
+        } else {
+          stop(message)
+        }
+      }
+    }
+    
   } else if (promote == 'raw') {
     res <- raw_vec
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 8, endian = endian)
+  } else if (promote == 'bit64') {
+    res <- .Call(raw_to_integer64_, raw_vec, big_endian = (endian == 'big'))
   } else {
     stop("Unknown promotion method: ", promote)
   }
@@ -165,19 +184,39 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL) {
 #' @rdname read_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL) {
+read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check = NULL) {
   endian <- get_endian_method(con, endian)
   promote <- get_promote_method(con, promote)
+  bounds_check <- get_bounds_check_method(con, bounds_check)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
   eof_check(con, n * 8, length(raw_vec))
   
   if (promote  == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint64', endian == 'big')
+    
+    if (bounds_check != 'ignore') {
+      lo <-   0 
+      hi <-   2^53
+      
+      if (any(res < lo) || any(res > hi)) {
+        bad_vals <- res[res < lo | res > hi]
+        message <- sprintf("Out of bounds for promotion to 'double' [0, 2^53] : %s", deparse1(bad_vals))
+        if (bounds_check == "warn") {
+          warning(message)
+        } else {
+          stop(message)
+        }
+      }
+    }
+    
+    
   } else if (promote == 'raw') {
     res <- raw_vec
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 8, endian = endian)
+  } else if (promote == 'bit64') {
+    res <- .Call(raw_to_integer64_, raw_vec, big_endian = (endian == 'big'))
   } else {
     stop("Unknown promotion method: ", promote)
   }
@@ -196,6 +235,12 @@ if (FALSE) {
 }
 
 
+if (FALSE) {
+  data <- as.raw(c(1:7, 0, 1:8))
+  con <- rawConnection(data, 'rb')
+  read_int64(con, n = 1)
+  close(con)
+}
 
 
 
