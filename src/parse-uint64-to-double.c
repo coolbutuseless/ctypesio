@@ -15,7 +15,7 @@
 // Reverse mem copy
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static void rev_memcpy(uint8_t *dst, uint8_t *src, size_t N) {
-  for (int i = 0; i < N; i++) {
+  for (size_t i = 0; i < N; i++) {
     dst[i] = src[N - 1 - i]; 
   }
 }
@@ -69,15 +69,15 @@ SEXP convert_cint_to_rdbl_(SEXP x_, SEXP type_, SEXP big_endian_) {
     error("type not understood: %s", type);
   }
   
-  int Nbytes = length(x_);
+  size_t Nbytes = (size_t)length(x_);
   
   if (Nbytes % width != 0) {
-    error("Nbytes (%i) is not a multiple of width %zu\n", Nbytes, width);
+    error("Nbytes (%zu) is not a multiple of width %zu\n", Nbytes, width);
   }
   
-  int N = Nbytes / width;
+  size_t N = Nbytes / width;
   
-  SEXP res_ = PROTECT(allocVector(REALSXP, N));
+  SEXP res_ = PROTECT(allocVector(REALSXP, (R_xlen_t)N));
   double *res = REAL(res_);
   
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -125,7 +125,7 @@ SEXP convert_cint_to_rdbl_(SEXP x_, SEXP type_, SEXP big_endian_) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
   
-  int N  = length(x_);
+  size_t N  = (size_t)length(x_);
   double *x = REAL(x_);
   
   size_t width = 0;
@@ -152,7 +152,7 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
     error("type not understood: %s", type);
   }
   
-  SEXP res_ = PROTECT(allocVector(RAWSXP, N * width));
+  SEXP res_ = PROTECT(allocVector(RAWSXP, (R_xlen_t)(N * width)));
   uint8_t *res = RAW(res_);
   
   bool big_endian = asLogical(big_endian_);
@@ -160,18 +160,19 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
   if (last_char == '8') {
     // 8 bit
     if (first_char == 'u') {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         res[i] = (uint8_t)x[i];
       }
     } else {
-      for (int i = 0; i < N; i++) {
-        res[i] = (int8_t)x[i];
+      int8_t *res2 = (int8_t*)res; // to avoid a Wconversion issue
+      for (size_t i = 0; i < N; i++) {
+        res2[i] = (int8_t)x[i];
       }
     }
   } else if (last_char == '6') {
     // 16 bit
     if (first_char == 'u') {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         uint16_t val = (uint16_t)x[i];
         if (big_endian) {
           rev_memcpy(res + i * width, (uint8_t *)&val, width);
@@ -180,7 +181,7 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
         }
       }
     } else {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         int16_t val = (int16_t)x[i];
         if (big_endian) {
           rev_memcpy(res + i * width, (uint8_t *)&val, width);
@@ -192,7 +193,7 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
   } else if (last_char == '2') {
     // 32 bit
     if (first_char == 'u') {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         uint32_t val = (uint32_t)x[i];
         if (big_endian) {
           rev_memcpy(res + i * width, (uint8_t *)&val, width);
@@ -201,7 +202,7 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
         }
       }
     } else {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         int32_t val = (int32_t)x[i];
         if (big_endian) {
           rev_memcpy(res + i * width, (uint8_t *)&val, width);
@@ -213,7 +214,7 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
   } else if (last_char == '4') {
     // 64 bit
     if (first_char == 'u') {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         uint64_t val = (uint64_t)x[i];
         if (big_endian) {
           rev_memcpy(res + i * width, (uint8_t *)&val, width);
@@ -222,7 +223,7 @@ SEXP convert_rdbl_to_cint_(SEXP x_, SEXP type_, SEXP big_endian_) {
         }
       }
     } else {
-      for (int i = 0; i < N; i++) {
+      for (size_t i = 0; i < N; i++) {
         int64_t val = (int64_t)x[i];
         if (big_endian) {
           rev_memcpy(res + i * width, (uint8_t *)&val, width);
