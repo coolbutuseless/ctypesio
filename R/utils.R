@@ -47,8 +47,8 @@ promote_methods <- c("dbl", "hex", "raw", 'bit64')
 #' 
 #' @inheritParams read_uint8
 #' 
-#' @param promote Default method of promotion for uint32, uint64 and int64.
-#'        One of: 'dbl', 'hex', 'raw'. Default: 'dbl'
+#' @param uint32,int64,uint64 specifiy separate promotion methods for these types
+#'        One of: 'dbl', 'hex', 'raw' and 'bit64' (for 64-bit types only) Default: 'dbl'
 #'        \describe{
 #'          \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
 #'          will lose precision.}
@@ -67,17 +67,26 @@ promote_methods <- c("dbl", "hex", "raw", 'bit64')
 #' con <- set_integer_promotion("big")
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-set_integer_promotion <- function(con, promote = 'dbl') {
-  stopifnot(promote %in% promote_methods)
-  attr(con, "promote") <- promote
+set_integer_promotion <- function(con, uint32 = 'dbl', int64 = 'dbl', uint64 = 'dbl') {
+  stopifnot(uint32 %in% setdiff(promote_methods, 'bit64'))
+  stopifnot( int64 %in% promote_methods)
+  stopifnot(uint64 %in% promote_methods)
+  
+  attr(con, "promote_uint32") <- uint32
+  attr(con, "promote_int64" ) <-  int64
+  attr(con, "promote_uint64") <- uint64
   con
 }
 
 
-get_promote_method <- function(con, promote) {
+get_promote_method <- function(con, promote, type) {
+  
+  attr_name <- paste0("promote_", type)
+  
   promote <- promote %||% 
-    attr(con, "promote", exact = TRUE) %||%
+    attr(con, attr_name, exact = TRUE) %||%
     "dbl"
+  
   stopifnot(promote %in% promote_methods)
   promote
 }

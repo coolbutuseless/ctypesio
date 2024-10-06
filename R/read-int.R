@@ -118,7 +118,7 @@ read_int32 <- function(con, n = 1, endian = NULL) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
   endian <- get_endian_method(con, endian)
-  promote <- get_promote_method(con, promote)
+  promote <- get_promote_method(con, promote, type = 'uint32')
   
   raw_vec <- readBin(con, 'raw', n = n * 4, size = 1)
   do_eof_check(con, n * 4, length(raw_vec))
@@ -143,7 +143,7 @@ read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_int64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check = NULL) {
   endian <- get_endian_method(con, endian)
-  promote <- get_promote_method(con, promote)
+  promote <- get_promote_method(con, promote, type = 'int64')
   bounds_check <- get_bounds_check_method(con, bounds_check)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
@@ -173,7 +173,7 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check =
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check = NULL) {
   endian <- get_endian_method(con, endian)
-  promote <- get_promote_method(con, promote)
+  promote <- get_promote_method(con, promote, type = 'uint64')
   bounds_check <- get_bounds_check_method(con, bounds_check)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)

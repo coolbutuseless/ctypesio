@@ -5,15 +5,15 @@
 \title{Tag a connection with the preferred integer promotion method for types
 larger that R's integer type i.e. uint32, uint64, int64}
 \usage{
-set_integer_promotion(con, promote = "dbl")
+set_integer_promotion(con, uint32 = "dbl", int64 = "dbl", uint64 = "dbl")
 }
 \arguments{
 \item{con}{Connection object created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
-\item{promote}{Default method of promotion for uint32, uint64 and int64.
-One of: 'dbl', 'hex', 'raw'. Default: 'dbl'
+\item{uint32, int64, uint64}{specifiy separate promotion methods for these types
+One of: 'dbl', 'hex', 'raw' and 'bit64' (for 64-bit types only) Default: 'dbl'
 \describe{
   \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
   will lose precision.}
