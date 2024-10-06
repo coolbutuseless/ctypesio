@@ -208,15 +208,26 @@ do_eof_check <- function(con, n_requested, n_read) {
 do_bounds_check <- function(x, bounds_check, lo, hi, lo_str = as.character(lo), hi_str = as.character(hi)) {
   if (bounds_check == 'ignore') return();
 
-  if (any(x < lo) || any(x > hi)) {
+  bad_vals <- NULL
+  if (is.infinite(lo)) {
+    bad_vals <- x[x > hi]
+  } else if (is.infinite(hi)) {
+    bad_vals <- x[x < lo]
+  } else {
     bad_vals <- x[x < lo | x > hi]
-    message <- sprintf("Out of bounds [%s, %s] : %s", lo_str, hi_str, deparse1(bad_vals))
+  }
+  
+  
+  if (length(bad_vals) > 0) {
+    message <- sprintf("Out of bounds [%s, %s] : %s", lo_str, hi_str, paste(as.character(bad_vals), collapse = ", "))
     if (bounds_check == "warn") {
       warning(message)
     } else {
       stop(message)
     }
   }
+  
+  
 }
 
 

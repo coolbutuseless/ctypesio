@@ -212,11 +212,25 @@ if (FALSE) {
 
 
 if (FALSE) {
-  data <- as.raw(c(1:7, 0, 1:8))
+  data <- as.raw(c(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x8f))
   con <- rawConnection(data, 'rb')
-  read_int64(con, n = 1)
+  x <- read_uint64(con, n = 1, promote = 'bit64')
+  x
   close(con)
+  
+  
+  
+  con <- rawConnection(raw(), "wb")
+  write_uint8(con, c(255, 256, -1))
+  close(con)
+  
+  
+  
 }
+
+
+
+
 
 
 

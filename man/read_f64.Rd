@@ -51,8 +51,10 @@ Read floating point numbers into a standard R vector of doubles
   \item{single precision}{4 byte floating point numbers. \code{read_f32()} 
         also available as \code{read_float()}}
   \item{half precision}{2 byte floating point numbers. \code{read_f16()} 
-        also available as \code{read_half()}}
-  \item{bfloat}{2 byte floating point numbers in the bfloat format  \code{read_bfloat()}} 
+        also available as \code{read_half()}.  Consists of 1 sign bit, 
+        5 bits for exponent and 10 bits for fraction.}
+  \item{bfloat}{2 byte floating point numbers in the bfloat format  \code{read_bfloat()}.
+        Consits of 1 sign bit, 8 bits fo exponent and 7 bits for fraction.} 
 }
 }
 \examples{
