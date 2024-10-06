@@ -18,30 +18,7 @@ write_raw <- function(con, x, bounds_check = NULL) {
   
   if (is.integer(x)) {
     bounds_check <- get_bounds_check_method(con, bounds_check)
-    
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # Bound check
-    #    0 = ignore
-    #    1 = warning
-    #    2 = error
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (bounds_check != "ignore") {
-      
-      lo <- 0
-      hi <- 255
-      
-      
-      if (any(x < lo) || any(x > hi)) {
-        bad_vals <- x[x < lo | x > hi]
-        message <- sprintf("Out of bounds [%i, %i] : %s", lo, hi, deparse1(bad_vals))
-        if (bounds_check == "warn") {
-          warning(message)
-        } else {
-          stop(message)
-        }
-      }
-    }
-    
+    do_bounds_check(x, bounds_check,  lo = 0, hi = 255)
     x <- as.raw(x)
   }
   

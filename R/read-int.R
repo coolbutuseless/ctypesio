@@ -53,7 +53,7 @@ read_uint8 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'integer', n = n, size = 1, endian = endian, signed = FALSE)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -67,7 +67,7 @@ read_int8 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'integer', n = n, size = 1, endian = endian, signed = TRUE)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -81,7 +81,7 @@ read_int16 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'integer', n = n, size = 2, endian = endian, signed = TRUE)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -94,7 +94,7 @@ read_uint16 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'integer', n = n, size = 2, endian = endian, signed = FALSE)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -108,7 +108,7 @@ read_int32 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'integer', n = n, size = 4, endian = endian, signed = TRUE)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -121,7 +121,7 @@ read_uint32 <- function(con, n = 1, endian = NULL, promote = NULL) {
   promote <- get_promote_method(con, promote)
   
   raw_vec <- readBin(con, 'raw', n = n * 4, size = 1)
-  eof_check(con, n * 4, length(raw_vec))
+  do_eof_check(con, n * 4, length(raw_vec))
   
   if (promote == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint32', endian == 'big')
@@ -147,25 +147,12 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check =
   bounds_check <- get_bounds_check_method(con, bounds_check)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
-  eof_check(con, n * 8, length(raw_vec))
+  do_eof_check(con, n * 8, length(raw_vec))
   
   if (promote == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'int64', endian == 'big')
-    if (bounds_check != 'ignore') {
-      lo <- -(2^53)
-      hi <-   2^53
-      
-      if (any(res < lo) || any(res > hi)) {
-        bad_vals <- res[res < lo | res > hi]
-        message <- sprintf("Out of bounds for promotion to 'double' [-(2^53), 2^53] : %s", deparse1(bad_vals))
-        if (bounds_check == "warn") {
-          warning(message)
-        } else {
-          stop(message)
-        }
-      }
-    }
-    
+    do_bounds_check(res, bounds_check, lo = -(2^53), hi = (2^53), lo_str = "-(2^53)", hi_str = "2^53") 
+
   } else if (promote == 'raw') {
     res <- raw_vec
   } else if (promote == 'hex') {
@@ -176,7 +163,7 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check =
     stop("Unknown promotion method: ", promote)
   }
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -190,27 +177,11 @@ read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check 
   bounds_check <- get_bounds_check_method(con, bounds_check)
   
   raw_vec <- readBin(con, 'raw', n = n * 8, size = 1)
-  eof_check(con, n * 8, length(raw_vec))
+  do_eof_check(con, n * 8, length(raw_vec))
   
   if (promote  == 'dbl') {
     res <- .Call(convert_cint_to_rdbl_, raw_vec, 'uint64', endian == 'big')
-    
-    if (bounds_check != 'ignore') {
-      lo <-   0 
-      hi <-   2^53
-      
-      if (any(res < lo) || any(res > hi)) {
-        bad_vals <- res[res < lo | res > hi]
-        message <- sprintf("Out of bounds for promotion to 'double' [0, 2^53] : %s", deparse1(bad_vals))
-        if (bounds_check == "warn") {
-          warning(message)
-        } else {
-          stop(message)
-        }
-      }
-    }
-    
-    
+    do_bounds_check(res, bounds_check, lo = 0, hi = (2^53), lo_str = "0", hi_str = "2^53")
   } else if (promote == 'raw') {
     res <- raw_vec
   } else if (promote == 'hex') {

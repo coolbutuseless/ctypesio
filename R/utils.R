@@ -173,7 +173,7 @@ get_na_check_method <- function(con, na_check) {
 #  * 'eof_check' method set to 'warn' or 'error'
 #  * n items requested < n items read
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-eof_check <- function(con, n_requested, n_read) {
+do_eof_check <- function(con, n_requested, n_read) {
   
   if (length(n_read) == 0) n_read <- 0
   if (length(n_requested) == 1 && length(n_read) == 1 && n_requested == n_read) return();
@@ -189,6 +189,28 @@ eof_check <- function(con, n_requested, n_read) {
     stop(msg)
   }
 }
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Check bounds and report error
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+do_bounds_check <- function(x, bounds_check, lo, hi, lo_str = as.character(lo), hi_str = as.character(hi)) {
+  if (bounds_check == 'ignore') return();
+
+  if (any(x < lo) || any(x > hi)) {
+    bad_vals <- x[x < lo | x > hi]
+    message <- sprintf("Out of bounds [%s, %S] : %s", lo_str, hi_str, deparse1(bad_vals))
+    if (bounds_check == "warn") {
+      warning(message)
+    } else {
+      stop(message)
+    }
+  }
+}
+
+
 
 
 if (FALSE) {

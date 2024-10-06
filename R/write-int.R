@@ -78,20 +78,9 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
   #    2 = error
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (bounds_check != "ignore") {
-    
     lo <- ifelse(signed, signed_lo[width], unsigned_lo[width])
     hi <- ifelse(signed, signed_hi[width], unsigned_hi[width])
-    
-    
-    if (any(x < lo) || any(x > hi)) {
-      bad_vals <- x[x < lo | x > hi]
-      message <- sprintf("Out of bounds [%i, %i] : %s", lo, hi, deparse1(bad_vals))
-      if (bounds_check == "warn") {
-        warning(message)
-      } else {
-        stop(message)
-      }
-    }
+    do_bounds_check(x, bounds_check, lo = lo, hi = hi)
   }
   
   if (is.double(x) && type %in% c('uint32', 'uint64', 'int64')) {

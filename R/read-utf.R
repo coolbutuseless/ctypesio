@@ -15,7 +15,7 @@
 read_raw <- function(con, n = 1) {
   res <- readBin(con, 'raw', n = n, size = 1)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -53,7 +53,7 @@ read_raw <- function(con, n = 1) {
 read_str <- function(con) {
   res <- readBin(con, 'character', n = 1, size = 1)
   
-  eof_check(con, 1, length(res))
+  do_eof_check(con, 1, length(res))
   res
 }
 
@@ -67,7 +67,7 @@ read_str_raw <- function(con, n) {
   vec <- read_raw(con, n)
   res <- rawToChar(vec)
   
-  eof_check(con, n, nchar(res))
+  do_eof_check(con, n, nchar(res))
   res
 }
 
@@ -97,7 +97,7 @@ read_utf8   <- function(con) {
 
   res <- intToUtf8(chars)
   
-  eof_check(con, 1, length(res))
+  do_eof_check(con, 1, length(res))
   res
 }
 
@@ -111,7 +111,7 @@ read_utf8_raw <- function(con, n) {
   # Convert string to UTF-8 and return
   res <- intToUtf8(as.integer(raw_vec))
   
-  eof_check(con, 1, length(res))
+  do_eof_check(con, 1, length(res))
   res
 }
 

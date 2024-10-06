@@ -29,7 +29,7 @@
 scan_dbl <- function(con, n = 1, quiet = TRUE, ...) {
   res <- scan(con, what = double(), n = n, quiet = quiet, ...)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -40,7 +40,7 @@ scan_dbl <- function(con, n = 1, quiet = TRUE, ...) {
 scan_int <- function(con, n = 1, quiet = TRUE, ...) {
   res <- scan(con, what = integer(), n = n, quiet = quiet, ...)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -52,7 +52,7 @@ scan_int <- function(con, n = 1, quiet = TRUE, ...) {
 scan_str <- function(con, n = 1, quiet = TRUE, ...) {
   res <- scan(con, what = character(), n = n, quiet = quiet, ...)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 

@@ -33,7 +33,7 @@ read_f64 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'double', n = n, size = 8, endian = endian)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -47,7 +47,7 @@ read_f32 <- function(con, n = 1, endian = NULL) {
   
   res <- readBin(con, 'double', n = n, size = 4, endian = endian)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -62,7 +62,7 @@ read_f16 <- function(con, n = 1, endian = NULL) {
   raw_vec <- readBin(con, 'raw', n = 2 * n, size = 1)
   res <- chalf_to_rdbl(raw_vec, endian)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 
@@ -76,7 +76,7 @@ read_bfloat <- function(con, n = 1, endian = NULL) {
   raw_vec <- readBin(con, 'raw', n = 2 * n, size = 1)
   res <- bfloat_to_rdbl(raw_vec, endian)
   
-  eof_check(con, n, length(res))
+  do_eof_check(con, n, length(res))
   res
 }
 

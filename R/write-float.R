@@ -42,28 +42,9 @@ write_f32 <- function(con, x, endian = NULL, bounds_check = NULL) {
   
   x <- as.double(x)
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Bound check
-  #    0 = ignore
-  #    1 = warning
-  #    2 = error
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (bounds_check != "ignore") {
-    
-    lo <- -3.40282347E+38
-    hi <-  3.40282347E+38
-    
-    if (any(x < lo) || any(x > hi)) {
-      bad_vals <- x[x < lo | x > hi]
-      message <- sprintf("Out of bounds [%f, %f] : %s", lo, hi, deparse1(bad_vals))
-      if (bounds_check == "warn") {
-        warning(message)
-      } else {
-        stop(message)
-      }
-    }
-  }
-  
+  do_bounds_check(x, bounds_check, 
+                  lo = -3.40282347E+38, hi = 3.40282347E+38, 
+                  lo_str = "-3.40282347E+38", hi_str = "3.40282347E+38")
   
   writeBin(x, con, size = 4, endian = endian)
   invisible(con)
@@ -85,28 +66,7 @@ write_f16 <- function(con, x, endian = NULL, bounds_check = NULL) {
   bounds_check <- get_bounds_check_method(con, bounds_check)
   
   x <- as.double(x)
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Bound check
-  #    0 = ignore
-  #    1 = warning
-  #    2 = error
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (bounds_check != "ignore") {
-    
-    lo <- -65504
-    hi <-  65504
-    
-    if (any(x < lo) || any(x > hi)) {
-      bad_vals <- x[x < lo | x > hi]
-      message <- sprintf("Out of bounds [%f, %f] : %s", lo, hi, deparse1(bad_vals))
-      if (bounds_check == "warn") {
-        warning(message)
-      } else {
-        stop(message)
-      }
-    }
-  }
+  do_bounds_check(x, bounds_check,  lo = -65504, hi = 65504)
   
   raw_vec <- rdbl_to_chalf(x, endian = endian)
   writeBin(raw_vec, con)

@@ -25,7 +25,7 @@ read_hex <- function(con, n = 1, size = 1, endian = NULL) {
   endian <- get_endian_method(con, endian)
   
   raw_vec <- read_raw(con, n = n * size)
-  eof_check(con, n * size, length(raw_vec))
+  do_eof_check(con, n * size, length(raw_vec))
   
   raw_to_hex(raw_vec, size = size, endian = endian)
 }
