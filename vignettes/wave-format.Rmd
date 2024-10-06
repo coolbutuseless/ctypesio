@@ -1,0 +1,156 @@
+---
+title: "Handcrafting a WAV file"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Handcrafting a WAV file}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ctypesio)
+```
+
+## WAV files
+
+WAV files are a standard format for storing audio data.
+
+This vignette will use the WAV file structure to write bespoke data as a 
+WAV file, and then read it back in.
+
+
+## WAV file structure
+
+The 44-byte header structure for a simple wave file is shown below.
+
+```{r echo=FALSE}
+wav_info <- read.csv(textConnection(
+r'{"Positions","Sample.Value","Description"
+"1 - 4","'RIFF'","Marks the file as a riff file. Characters are each 1 byte long."
+"5 - 8","File size (integer)","Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you’d fill this in after creation."
+"9 -12","“WAVE”","File Type Header. For our purposes, it always equals “WAVE”."
+"13-16","'fmt '","Format chunk marker. Includes trailing space"
+"17-20","16","Length of format data as listed above"
+"21-22","1","Type of format (1 is PCM) - 2 byte integer"
+"23-24","2","Number of Channels - 2 byte integer"
+"25-28","44100","Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz."
+"29-32","176400","(Sample Rate * BitsPerSample * Channels) / 8."
+"33-34","4","(BitsPerSample * Channels) / 8.  (1)  8 bit mono (2) - 8 bit stereo/16 bit mono (4) - 16 bit stereo"
+"35-36","16","Bits per sample"
+"37-40","'data'","data chunk header. Marks the beginning of the data section."
+"41-44","File size (data)","Size of the data section."
+}'))
+
+knitr::kable(wav_info, caption = "WAV file structure")
+```
+
+## Audio waveform
+
+Create 2 seconds of random noise data to be played at 44.1 kHz.
+
+Data values should be in range for a 16-bit integer i.e. [-32768, 32767]
+
+```{r}
+audio <- as.integer(runif(44100 * 2, -32768, 32767))
+```
+
+## Write the WAV file
+
+Data is stored little-endian (which is the default endian mode for `ctypesio`)
+
+```{r eval=TRUE}
+wav_file <- tempfile(fileext = ".wav")
+con <- file(wav_file, "wb")
+
+write_utf8_raw(con, "RIFF")
+write_uint32(con, length(audio) * 2 + 44 - 8) # total file length - 8
+write_utf8_raw(con, "WAVE")
+write_utf8_raw(con, "fmt ")
+write_uint32(con, 16)                 # size of header so far
+write_uint16(con, 1)                  # sample format = 2-byte integer
+write_uint16(con, 1)                  # single channel
+write_uint32(con, 44100)              # sample rate
+write_uint32(con, 44100 * 16 * 1 / 8) # rate * bits * channels / 8
+write_uint16(con, 2)                  # 16-bit mono audio
+write_uint16(con, 16)                 # bits per sample
+write_utf8_raw(con, 'data')
+write_uint32(con, length(audio) * 2)  # sampled data size
+write_int16(con, audio)
+
+close(con)
+```
+
+
+## Play the audio
+
+This audio isn't very interesting, but it can be played using the `audio` package
+
+```{r eval=FALSE}
+library(audio)
+wav <- audio::load.wave(wav_file)
+audio::play(wav)
+```
+
+
+# Parsing a WAV file
+
+This is just the reverse of writing the file.
+
+```{r}
+con <- file(wav_file, "rb")
+
+read_utf8_raw(con, 4)
+read_uint32(con)      # total file length - 8
+read_utf8_raw(con, 4)
+read_utf8_raw(con, 4)
+read_uint32(con)      # size of header above
+read_uint16(con)      # sample format = 2-byte integer
+read_uint16(con)      # single channel
+read_uint32(con)      # sample rate
+read_uint32(con)      # rate * bits * channels / 8
+read_uint16(con)      # 16-bit mono audio
+read_uint16(con)      # bits per sample
+read_utf8_raw(con, 4)
+(data_size <- read_uint32(con))         # sampled data size
+data <- read_uint16(con, data_size / 2) # read in 16-bit samples
+
+close(con)
+```
+
+
+## `ctypesio` is pipe-friendly
+
+All the `write_*()` functions in `ctypesio` return the connection object, 
+so that the functions can piped together.
+
+```{r eval=FALSE}
+wav_file <- tempfile(fileext = ".wav")
+con <- file(wav_file, "wb")
+
+write_utf8_raw(con, "RIFF") |>
+  write_uint32(length(audio) * 2 + 44 - 8) |> # total file length - 8
+  write_utf8_raw("WAVE")           |>
+  write_utf8_raw("fmt ")           |> 
+  write_uint32(16)                 |> # size of header so far
+  write_uint16(1)                  |> # sample format = 2-byte integer
+  write_uint16(1)                  |> # single channel
+  write_uint32(44100)              |> # sample rate
+  write_uint32(44100 * 16 * 1 / 8) |> # rate * bits * channels / 8
+  write_uint16(2)                  |> # 16-bit mono audio
+  write_uint16(16)                 |> # bits per sample
+  write_utf8_raw('data')           |> 
+  write_uint32(length(audio) * 2)  |> # sampled data size
+  write_int16(audio)
+
+close(con)
+```
+
+
+

@@ -201,7 +201,7 @@ do_bounds_check <- function(x, bounds_check, lo, hi, lo_str = as.character(lo), 
 
   if (any(x < lo) || any(x > hi)) {
     bad_vals <- x[x < lo | x > hi]
-    message <- sprintf("Out of bounds [%s, %S] : %s", lo_str, hi_str, deparse1(bad_vals))
+    message <- sprintf("Out of bounds [%s, %s] : %s", lo_str, hi_str, deparse1(bad_vals))
     if (bounds_check == "warn") {
       warning(message)
     } else {
