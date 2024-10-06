@@ -34,6 +34,17 @@ dbl_to_int <- function(x, type, endian = "little") {
 }
 
 
+int_size <- list(
+   int8  = 1L,
+  uint8  = 1L,
+   int16 = 2L,
+  uint16 = 2L,
+   int32 = 4L,
+  uint32 = 4L,
+   int64 = 8L,
+  uint64 = 8L
+)
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Write 
@@ -60,18 +71,52 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
   # Determine size and type
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   signed <- !startsWith(type, 'u')
-  if (endsWith(type, '8')) {
-    width <- 1L
-  } else if (endsWith(type, '6')) {
-    width <- 2L
-  } else if (endsWith(type, '2')) {
-    width <- 4L
-  } else if (endsWith(type, '4')) {
-    width <- 8L
-  } else {
+  width <- int_size[[type]]
+  if (length(width) == 0) {
     stop("Bad type: ", type)
   }
   
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # bit64::integer64 type
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (inherits(x, 'integer64')) {
+    
+    if (!(type %in% c('int64', 'uint64'))) {
+      stop("Can only write integer64 as 'int64' or 'uint64'")
+    }
+    
+    raw_vec <- .Call(integer64_to_raw_, x, big_endian = (endian == 'big'));
+    
+    write_raw(con, raw_vec, bounds_check = FALSE)
+    return(con)
+  }
+  
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # hex string
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (is.character(x)) {
+    
+    stopifnot(!anyNA(x))
+    
+    # Check that hex strings are the correct length
+    lens <- nchar(x)
+    if (any(lens) != width * 2) {
+      msg <- sprintf("Writing '%s' from hex string requires nchar(x) = %i.  Found: %s",
+                     type, width * 2, deparse1(sort(unique(lens))))
+    }
+    
+    # Convert all hex to a single raw vector
+    raw_vec <- hex_to_raw(x, endian = endian)
+    
+    write_raw(con, raw_vec, bounds_check = FALSE)
+    return(con)
+  }
+  
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Numeric types
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   do_na_check(x, na_check)
   
   if (bounds_check != "ignore") {
@@ -227,9 +272,14 @@ if (FALSE) {
 
 if (FALSE) {
   
-  con <- rawConnection(raw(), open = "w")
-  write_f16(con, c(1, 2)) 
-  dat <- rawConnectionValue(con)  
+  con <- rawConnection(as.raw(1:4), open = "rb")
+  x <- read_uint32(con, 1, promote = 'hex') 
+  close(con)
+  x
+  
+  con <- rawConnection(raw(), open = "wb")
+  write_uint32(con, x)
+  dat <- rawConnectionValue(con)
   close(con)
   dat
   
@@ -244,15 +294,17 @@ if (FALSE) {
 
 if (FALSE) {
   
+  ints <- bit64::as.integer64(1:4)
+  ints
+  
   con <- rawConnection(raw(), open = "w")
-  write_utf8(con, "hello there")
+  write_int64(con, ints)
   dat <- rawConnectionValue(con)  
   close(con)
   dat
   
   con <- rawConnection(dat, open = 'r')
-  read_utf8(con)
-  read_uint8(con, 1)
+  read_uint64(con, 4)
   close(con)
   
 }
