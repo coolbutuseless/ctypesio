@@ -43,17 +43,18 @@ dbl_to_int <- function(x, type, endian = "little") {
 #' @param signed Logical.  Signed value?
 #' @param width width of type in bytes.
 #' @param bounds_check check values lie within bounds. Default: "error"
+#' @param na_check check for NA values in tdata to be written
 #' @return raw vector
 #' @noRd
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-convert_integer_core <- function(con, x, type, endian, bounds_check) {
+convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Figure out 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   endian <- get_endian_method(con, endian)
   bounds_check <- get_bounds_check_method(con, bounds_check)
-
+  na_check <- get_na_check_method(con, na_check)
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Determine size and type
@@ -71,12 +72,8 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
     stop("Bad type: ", type)
   }
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Bound check
-  #    0 = ignore
-  #    1 = warning
-  #    2 = error
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  do_na_check(x, na_check)
+  
   if (bounds_check != "ignore") {
     lo <- ifelse(signed, signed_lo[width], unsigned_lo[width])
     hi <- ifelse(signed, signed_hi[width], unsigned_hi[width])
@@ -106,6 +103,11 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
 #'        this option should be retrieved from the connection object if possible
 #'        (where the user has used \code{set_bounds_check()}) or otherwise 
 #'        will be set to \code{"error"}
+#' @param na_check Check for NAs in the data to be written.
+#'        Default: NULL indicates that
+#'        this option should be retrieved from the connection object if possible
+#'        (where the user has used \code{set_na_check()}) or otherwise 
+#'        will be set to \code{"error"}
 #'        
 #' @return The original connection is returned invisibly.
 #' @examples
@@ -114,8 +116,9 @@ convert_integer_core <- function(con, x, type, endian, bounds_check) {
 #' close(con)
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_uint8 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='uint8' , endian = endian, bounds_check = bounds_check)
+write_uint8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='uint8' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
 
@@ -124,29 +127,9 @@ write_uint8 <- function(con, x, endian = NULL, bounds_check = NULL) {
 #' @rdname write_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_int8 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='int8' , endian = endian, bounds_check = bounds_check)
-  invisible(con)
-}
-
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' @rdname write_uint8
-#' @export
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_uint16 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='uint16' , endian = endian, bounds_check = bounds_check)
-  invisible(con)
-}
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' @rdname write_uint8
-#' @export
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_int16 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='int16' , endian = endian, bounds_check = bounds_check)
+write_int8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='int8' , endian = endian,
+                       bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
 
@@ -156,8 +139,9 @@ write_int16 <- function(con, x, endian = NULL, bounds_check = NULL) {
 #' @rdname write_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_uint32 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='uint32' , endian = endian, bounds_check = bounds_check)
+write_uint16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='uint16' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
 
@@ -166,8 +150,21 @@ write_uint32 <- function(con, x, endian = NULL, bounds_check = NULL) {
 #' @rdname write_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_int32 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='int32' , endian = endian, bounds_check = bounds_check)
+write_int16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='int16' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
+  invisible(con)
+}
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname write_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+write_uint32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='uint32' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
 
@@ -176,8 +173,9 @@ write_int32 <- function(con, x, endian = NULL, bounds_check = NULL) {
 #' @rdname write_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_uint64 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='uint64' , endian = endian, bounds_check = bounds_check)
+write_int32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='int32' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
 
@@ -186,8 +184,20 @@ write_uint64 <- function(con, x, endian = NULL, bounds_check = NULL) {
 #' @rdname write_uint8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_int64 <- function(con, x, endian = NULL, bounds_check = NULL) {
-  convert_integer_core(con, x, type ='int64' , endian = endian, bounds_check = bounds_check)
+write_uint64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='uint64' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
+  invisible(con)
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @rdname write_uint8
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+write_int64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
+  convert_integer_core(con, x, type ='int64' , endian = endian, 
+                       bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
 

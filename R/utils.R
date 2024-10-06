@@ -148,7 +148,7 @@ get_eof_check_method <- function(con, eof_check) {
 #' @param na_check one of: ignore, warn, error
 #' 
 #' @return Modified connection object
-#' @noRd
+#' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set_na_check <- function(con, na_check) {
   stopifnot(na_check %in% c('ignore', 'warn', 'error'))
@@ -211,6 +211,22 @@ do_bounds_check <- function(x, bounds_check, lo, hi, lo_str = as.character(lo), 
 }
 
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Check for NA
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+do_na_check <- function(x, na_check) {
+  if (is.raw(x) || na_check == 'ignore') return()
+  
+  if (anyNA(x)) {
+    bad_vals <- x[is.na(x)]  
+    message <- sprintf("NAs in data: %s", deparse1(bad_vals))
+    if (na_check == "warn") {
+      warning(message)
+    } else {
+      stop(message)
+    }
+  }
+}
 
 
 if (FALSE) {

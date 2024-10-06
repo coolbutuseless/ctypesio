@@ -14,10 +14,12 @@
 #' close(con)
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_f64 <- function(con, x, endian = NULL, bounds_check = NULL) {
+write_f64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
   endian <- get_endian_method(con, endian)
+  na_check <- get_na_check_method(con, na_check)
   
   x <- as.double(x)
+  do_na_check(x, na_check)
   
   writeBin(x, con, size = 8, endian = endian)
   
@@ -28,7 +30,7 @@ write_f64 <- function(con, x, endian = NULL, bounds_check = NULL) {
 #' @rdname write_f64
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_double <- write_f64
+write_dbl <- write_f64
 
 
 
@@ -36,11 +38,13 @@ write_double <- write_f64
 #' @rdname write_f64
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_f32 <- function(con, x, endian = NULL, bounds_check = NULL) {
+write_f32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
   endian <- get_endian_method(con, endian)
   bounds_check <- get_bounds_check_method(con, bounds_check)
+  na_check <- get_na_check_method(con, na_check)
   
   x <- as.double(x)
+  do_na_check(x, na_check)
   
   do_bounds_check(x, bounds_check, 
                   lo = -3.40282347E+38, hi = 3.40282347E+38, 
@@ -61,11 +65,14 @@ write_single <- write_f32
 #' @rdname write_f64
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_f16 <- function(con, x, endian = NULL, bounds_check = NULL) {
+write_f16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
   endian <- get_endian_method(con, endian)
   bounds_check <- get_bounds_check_method(con, bounds_check)
+  na_check <- get_na_check_method(con, na_check)
   
   x <- as.double(x)
+  do_na_check(x, na_check)
+  
   do_bounds_check(x, bounds_check,  lo = -65504, hi = 65504)
   
   raw_vec <- rdbl_to_chalf(x, endian = endian)

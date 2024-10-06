@@ -19,7 +19,8 @@ Key features:
 - Persitant defaults per-connection for:
   - Endianness
   - Bounds checking
-  - EOF behavoiur
+  - EOF behaviour
+  - NA checking
 - Support for integer types which contain values outside the range of
   R’s integer type (which is 32-bit signed)
 - Support for 16-bit floating point numbers using IEEE half-precition
@@ -39,8 +40,8 @@ Key features:
   - `read_uint8()`, `write_uint8()` etc for reading signed/unsigned 8,
     16, 32, 64-bit integers
   - For types which don’t fit in a standard R integer (e.g. `uint64`)
-    there are options to promote this to double, hexadecimal or read as
-    a raw vector
+    there are options to promote this to double, hexadecimal,
+    `bit64::integer64` or read as a raw vector
 - Other
   - `read_str()`, `read_str_raw()`, `read_utf8()`, `read_utf8_raw()`,
     `write_utf8()`, `write_utf8_raw()`
@@ -63,13 +64,15 @@ Key features:
     match the number requested. This would indicate the connection
     reached EOF during data reading. Options are to `ignore`, `warn` or
     `error`
+  - `set_na_check()` check for NAs in data prior to writing. Options are
+    to `ignore`, `warn` or `error`
 
 | bits | integer | floating point |
 |----|----|----|
 | 8 | Read/write. Signed/unsigned. | NA |
 | 16 | Read/write. Signed/unsigned. | Yes. Half-precision IEEE and bfloat |
 | 32 | Read/write. Signed/unsigned. (32bit unsigned integer promoted to double) | Yes |
-| 64 | Read/write. Signed/unsigned. with double, hex and raw vectors | Yes |
+| 64 | Read/write. Signed/unsigned. Double, hex, `bit64::integer64`, raw vectors | Yes |
 
 ## Installation
 

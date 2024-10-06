@@ -11,21 +11,21 @@
 \alias{write_int64}
 \title{Convert values to the given type and write to a connection}
 \usage{
-write_uint8(con, x, endian = NULL, bounds_check = NULL)
+write_uint8(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_int8(con, x, endian = NULL, bounds_check = NULL)
+write_int8(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_uint16(con, x, endian = NULL, bounds_check = NULL)
+write_uint16(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_int16(con, x, endian = NULL, bounds_check = NULL)
+write_int16(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_uint32(con, x, endian = NULL, bounds_check = NULL)
+write_uint32(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_int32(con, x, endian = NULL, bounds_check = NULL)
+write_int32(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_uint64(con, x, endian = NULL, bounds_check = NULL)
+write_uint64(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_int64(con, x, endian = NULL, bounds_check = NULL)
+write_int64(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 }
 \arguments{
 \item{con}{Connection object created with \code{file()}, \code{url()}, 
@@ -45,6 +45,12 @@ will be set to \code{"little"}}
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
 (where the user has used \code{set_bounds_check()}) or otherwise 
+will be set to \code{"error"}}
+
+\item{na_check}{Check for NAs in the data to be written.
+Default: NULL indicates that
+this option should be retrieved from the connection object if possible
+(where the user has used \code{set_na_check()}) or otherwise 
 will be set to \code{"error"}}
 }
 \value{

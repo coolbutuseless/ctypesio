@@ -2,24 +2,24 @@
 % Please edit documentation in R/write-float.R
 \name{write_f64}
 \alias{write_f64}
-\alias{write_double}
+\alias{write_dbl}
 \alias{write_f32}
 \alias{write_single}
 \alias{write_f16}
 \alias{write_half}
 \title{Convert values to the given type and write to a connection}
 \usage{
-write_f64(con, x, endian = NULL, bounds_check = NULL)
+write_f64(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_double(con, x, endian = NULL, bounds_check = NULL)
+write_dbl(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_f32(con, x, endian = NULL, bounds_check = NULL)
+write_f32(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_single(con, x, endian = NULL, bounds_check = NULL)
+write_single(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_f16(con, x, endian = NULL, bounds_check = NULL)
+write_f16(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 
-write_half(con, x, endian = NULL, bounds_check = NULL)
+write_half(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 }
 \arguments{
 \item{con}{Connection object created with \code{file()}, \code{url()}, 
@@ -39,6 +39,12 @@ will be set to \code{"little"}}
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
 (where the user has used \code{set_bounds_check()}) or otherwise 
+will be set to \code{"error"}}
+
+\item{na_check}{Check for NAs in the data to be written.
+Default: NULL indicates that
+this option should be retrieved from the connection object if possible
+(where the user has used \code{set_na_check()}) or otherwise 
 will be set to \code{"error"}}
 }
 \value{
