@@ -81,7 +81,7 @@ read_str_raw <- function(con, n) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_utf8   <- function(con) {
   
-  chars <- integer(0)
+  bytes <- integer(0)
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Keep reading bytes until we hit a null terminator
@@ -92,17 +92,17 @@ read_utf8   <- function(con) {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ch <- read_uint8(con)
   while (ch != 0) {
-    chars <- c(chars, ch)
+    bytes <- c(bytes, ch)
     ch    <- read_uint8(con)
     if (length(ch) == 0) {
       stop("Reached EOF looking for string null terminator")
     }
   }
 
-  res <- intToUtf8(chars)
+  str <- rawToChar(as.raw(bytes))
+  Encoding(str) <- "UTF-8"
   
-  do_eof_check(con, 1, length(res))
-  res
+  str
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

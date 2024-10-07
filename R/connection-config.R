@@ -295,7 +295,7 @@ do_eof_check <- function(con, n_requested, n_read) {
   method <- attr(con, 'eof_check', exact = TRUE) %||% 'error' 
   if (method == 'ignore') return();
   
-  msg <- sprintf("EOF reached. Requested %i items, only got %i", n_requested, n_read)
+  msg <- sprintf("EOF reached. Requested %i items, only got %i", as.integer(n_requested), as.integer(n_read))
   
   if (method == 'warn') {
     warning(msg)
