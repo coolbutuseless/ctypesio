@@ -72,7 +72,6 @@ aperm_vector_to_array <- function(x, src, flipy = FALSE, simplify_matrix = TRUE)
     length(src) == 3
     !anyNA(src)
     all(nms %in% c('planes', 'rows', 'cols'))
-    nms[1] == 'planes'
   })
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,7 +151,6 @@ aperm_array_to_vector <- function(x, dst, flipy = FALSE) {
   if (!is.array(x)) {
     stop("Input 'x' must a matrix or array")
   }
-  stopifnot(dst[3] == 'planes')
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Sanity Check
@@ -162,6 +160,13 @@ aperm_array_to_vector <- function(x, dst, flipy = FALSE) {
   })
   
   idx_order <- match(c("rows", "cols", "planes"), dst)
+  
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Flip Y?
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (isTRUE(flipy)) {
+    x <- x[nrow(x):1 , , ]
+  }
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Do the actual permute
@@ -208,12 +213,15 @@ if (FALSE) {
   )
   aperm_vector_to_array(x, src = c(planes = 3, cols = 3, rows = 2))
   
-  mat <- matrix(c(
-    'r0', 'g0', 'b0',   'r1', 'g1', 'b1',   'r2', 'g2', 'b2',   
-    'r3', 'g3', 'b3',   'r4', 'g4', 'b4',   'r5', 'g5', 'b5'
-  ), nrow = 2, ncol = 9,  byrow = TRUE)
+  
+  
+  
+  mat <- array(letters[1:12], c(2, 3, 2))
   mat
-  aperm_array_to_vector(mat, dst = c('rows', 'cols', 'planes'))
+  aperm_array_to_vector(mat, dst = c('planes', 'cols', 'rows'))
+  
+  
+  
   
 }
 
