@@ -62,9 +62,9 @@ write_utf8 <- function(con, x) {
 write_utf8_raw <- function(con, x) {
   stopifnot(is.character(x) && length(x) == 1)
 
-  xb <- iconv(x, to = "UTF-8")
+  xb <- iconv(x, to = "UTF-8", toRaw = TRUE)[[1]]
 
-  writeBin(xb, con)
+  write_raw(con, xb)
 
   invisible(con)
 }

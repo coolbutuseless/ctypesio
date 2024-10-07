@@ -15,3 +15,25 @@ test_that("utf8 roundtrips work", {
 
   expect_equal(output, input, label = paste("roundtrip mismatch: ", "'utf8'"))
 })
+
+
+
+
+test_that("basic utf8 writing works", {
+  
+  con <- rawConnection(raw(), open = "w")
+  write_utf8_raw(con, "hi")
+  dat <- rawConnectionValue(con)
+  close(con)
+  
+  expect_length(dat, 2)
+  
+  
+  
+  con <- rawConnection(raw(), open = "w")
+  write_utf8(con, "hi")
+  dat <- rawConnectionValue(con)
+  close(con)
+  
+  expect_length(dat, 3)
+})
