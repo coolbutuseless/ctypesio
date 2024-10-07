@@ -11,8 +11,24 @@ set_bounds_check(con, bounds_check = "error")
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
-\item{bounds_check}{Default bounds checking behaviour. One of: ignore, warn, error.
-Default: error}
+\item{bounds_check}{Default bounds checking behaviour. One of: 'ignore', 'warn', 'error'.
+Default: 'error'.
+This default may be over-ridden by specifying
+the \code{bounds_check} argument when calling individual functions.
+\describe{
+  \item{\code{ignore}}{No explicit checks will be made for
+  out-of-bound values.
+  The underlying R functions may still do checking.
+  }
+  \item{\code{warn}}{Explicit checks will be made for
+  out-of-bound values.
+  If any are found, then a \code{warning()} will be issued.
+  }
+  \item{\code{error}}{Explicit checks will be made for
+  out-of-bound values.
+  If any are found, then a error will be raised.
+  }
+}}
 }
 \value{
 Modified connection object
@@ -21,6 +37,27 @@ Modified connection object
 For this connection, set the response when values do not fit into given type before writing.
 }
 \examples{
-con <- textConnection("hello")
-con <- set_bounds_check("warn")
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# Open a connection and configure it so out-of-bounds values
+# will cause a warning only.
+con <- rawConnection(as.raw(1:8), "rb")
+con <- set_bounds_check(con, bounds_check = "warn")
+
+# This line attempts to read a value from the connection which
+# is too large to store in a double precision floating point without
+# loss of integer precision.
+# Usually this would cause an error to be raised, but the 'bounds_check'
+# option has been set to give a warning only.
+read_uint64(con, n = 1, promote = "dbl")
+
+close(con)
+\dontshow{\}) # examplesIf}
 }
+\seealso{
+Other connection configuration functions: 
+\code{\link{set_endian}()},
+\code{\link{set_eof_check}()},
+\code{\link{set_integer_promotion}()},
+\code{\link{set_na_check}()}
+}
+\concept{connection configuration functions}

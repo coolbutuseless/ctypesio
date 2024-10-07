@@ -31,3 +31,12 @@ con <- file(tempfile(), "wb")
 write_hex(con, c("ff80", "0102"))
 close(con)
 }
+\seealso{
+Other data output functions: 
+\code{\link{fprintf}()},
+\code{\link{write_f64}()},
+\code{\link{write_raw}()},
+\code{\link{write_uint8}()},
+\code{\link{write_utf8}()}
+}
+\concept{data output functions}

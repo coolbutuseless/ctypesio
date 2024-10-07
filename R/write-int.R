@@ -159,6 +159,7 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
 #' con <- file(tempfile(), "wb")
 #' write_uint8(con, 1:4)
 #' close(con)
+#' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_uint8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {

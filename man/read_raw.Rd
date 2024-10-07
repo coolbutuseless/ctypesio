@@ -24,3 +24,12 @@ con <- rawConnection(charToRaw("hello12.3"))
 read_raw(con, 5)
 close(con)
 }
+\seealso{
+Other data input functions: 
+\code{\link{read_f64}()},
+\code{\link{read_hex}()},
+\code{\link{read_str}()},
+\code{\link{read_uint8}()},
+\code{\link{scan_dbl}()}
+}
+\concept{data input functions}

@@ -12,6 +12,7 @@
 #' write_raw(con, as.raw(1:4))
 #' write_raw(con, 1:4) 
 #' close(con)
+#' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_raw <- function(con, x, bounds_check = NULL) {
@@ -40,6 +41,7 @@ write_raw <- function(con, x, bounds_check = NULL) {
 #' con <- file(tempfile(), "wb")
 #' write_utf8(con, "hello")
 #' close(con)
+#' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_utf8 <- function(con, x) {

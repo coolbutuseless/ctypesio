@@ -64,3 +64,12 @@ con <- file(tempfile(), "wb")
 write_uint8(con, 1:4)
 close(con)
 }
+\seealso{
+Other data output functions: 
+\code{\link{fprintf}()},
+\code{\link{write_f64}()},
+\code{\link{write_hex}()},
+\code{\link{write_raw}()},
+\code{\link{write_utf8}()}
+}
+\concept{data output functions}

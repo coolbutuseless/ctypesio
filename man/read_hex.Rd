@@ -41,3 +41,12 @@ con <- rawConnection(as.raw(1:4))
 read_hex(con, n = 2, size = 2, endian = "big")
 close(con)
 }
+\seealso{
+Other data input functions: 
+\code{\link{read_f64}()},
+\code{\link{read_raw}()},
+\code{\link{read_str}()},
+\code{\link{read_uint8}()},
+\code{\link{scan_dbl}()}
+}
+\concept{data input functions}

@@ -46,6 +46,8 @@
 #' read_int64(con, n = 1)
 #' read_uint8(con, n = 4)
 #' close(con)
+#' 
+#' @family data input functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_uint8 <- function(con, n = 1, endian = NULL) {

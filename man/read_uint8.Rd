@@ -82,4 +82,14 @@ con <- rawConnection(data, 'rb')
 read_int64(con, n = 1)
 read_uint8(con, n = 4)
 close(con)
+
 }
+\seealso{
+Other data input functions: 
+\code{\link{read_f64}()},
+\code{\link{read_hex}()},
+\code{\link{read_raw}()},
+\code{\link{read_str}()},
+\code{\link{scan_dbl}()}
+}
+\concept{data input functions}

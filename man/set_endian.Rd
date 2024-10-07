@@ -11,8 +11,10 @@ set_endian(con, endian = "little")
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
-\item{endian}{Default endianness to assign to this connection. 
-Default: little}
+\item{endian}{Default endianness to assign to this connection. One of either
+"little" or "big".  Default: "little".
+This default may be over-ridden by specifying
+the \code{endian} argument when calling individual functions.}
 }
 \value{
 Modified connection object
@@ -21,6 +23,25 @@ Modified connection object
 Tag a connection with the preferred endianness
 }
 \examples{
-con <- textConnection("hello")
-con <- set_endian("big")
+# Open a connection and configure it so all subsequent read/write operations
+# use big-endian ordering.
+con <- rawConnection(as.raw(c(0, 1, 0, 1)), "rb")
+con <- set_endian(con, endian = "big")
+
+# Future reads will be be big endian
+read_uint16(con, n = 1)
+
+# Unless over-ridden during the read
+read_uint16(con, n = 1, endian = "little")
+
+close(con)
+
 }
+\seealso{
+Other connection configuration functions: 
+\code{\link{set_bounds_check}()},
+\code{\link{set_eof_check}()},
+\code{\link{set_integer_promotion}()},
+\code{\link{set_na_check}()}
+}
+\concept{connection configuration functions}

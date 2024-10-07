@@ -12,6 +12,7 @@
 #' con <- file(tempfile(), "wb")
 #' write_f64(con, c(1, 2, 3, 4))
 #' close(con)
+#' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_f64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {

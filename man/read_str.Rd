@@ -46,3 +46,12 @@ con <- rawConnection(charToRaw("hello12.3"))
 read_utf8_raw(con, 3)
 close(con)
 }
+\seealso{
+Other data input functions: 
+\code{\link{read_f64}()},
+\code{\link{read_hex}()},
+\code{\link{read_raw}()},
+\code{\link{read_uint8}()},
+\code{\link{scan_dbl}()}
+}
+\concept{data input functions}

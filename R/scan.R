@@ -24,6 +24,7 @@
 #' scan_int(con)
 #' scan_dbl(con)
 #' close(con)
+#' @family data input functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 scan_dbl <- function(con, n = 1, quiet = TRUE, ...) {
@@ -68,17 +69,18 @@ scan_str <- function(con, n = 1, quiet = TRUE, ...) {
 #' @param ... values to be passed in to \code{fmt}. See \code{\link{sprintf}()}
 #' @param sep If there are multiple strings to be printed, this separated will be 
 #'        written after each one.
-#' @param useBytes
+#' @param useBytes See \code{\link{writeLines}()}
 #' 
 #' @return The original connection is returned invisibly.
 #' @examples
 #' con <- rawConnection(raw(), "wb")
 #' fprintf(con, "%i,%6.2f", 1, 3.14159)
+#' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 fprintf <- function(con, fmt, ..., sep = "\n", useBytes = FALSE) {
   fprintf_raw(con, fmt, ..., sep = sep, useBytes = useBytes)
-  write_raw(con, 0x00)
+  write_raw(con, 0L) # Nul-terminator
   invisible(con)
 }
 

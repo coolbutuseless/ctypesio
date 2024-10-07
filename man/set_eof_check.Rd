@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{set_eof_check}
 \alias{set_eof_check}
-\title{Set EOF handling for this connection}
+\title{Set EOF (End-of-file) handling for this connection}
 \usage{
 set_eof_check(con, eof_check = "error")
 }
@@ -11,16 +11,65 @@ set_eof_check(con, eof_check = "error")
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
-\item{eof_check}{ignore, warn, error.  If set to 'warn' then when EOF reached
-any further reads will spark a warning only.}
+\item{eof_check}{Default EOF checking behaviour. One of: 'ignore', 'warn', 'error'
+Default: 'error'. 
+\describe{
+  \item{\code{ignore}}{No explicit checks will be made for
+  EOF.
+  The underlying R functions may still do checking.
+  }
+  \item{\code{warn}}{Explicit checks will be made for
+  reading data at EOF.
+  If this occurs, then a \code{warning()} will be issued.
+  }
+  \item{\code{error}}{Explicit checks will be made for
+  reading data at EOF.
+  If any are found, then a error will be raised.
+  }
+}}
 }
 \value{
 Modified connection object
 }
 \description{
-Set EOF handling for this connection
+When the end-of-file is reached and values are requested from the connection,
+how should a \code{read} call check and react?
+}
+\details{
+Note: R's \code{readBin()} does not necessarily react when the end-of-file 
+is reached, and in many situations all that will happen is that fewer
+data values will be returned than what was requested.
+
+By setting this option on the connection, work is done to check the count
+of returned values after every call to try and detect when the
+end-of-file has been reached.
 }
 \examples{
-con <- textConnection("hello")
-con <- set_eof_check("warn")
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# Open a connection and configure it so reading past the end-of-file 
+# ignored, and operations simply return fewer values than requested
+con <- rawConnection(as.raw(1:8), "rb")
+con <- set_eof_check(con, eof_check = "ignore")
+
+# There are only 8 bytes in the connection. 
+# Attempting to read 12 bytes will reach the end of the file.
+# Because "eof_check" has been set to "ignore", there will just be
+# silent truncation of the data
+read_uint8(con, n = 12)
+
+# The connection can be configured to raise an error or warning
+# when EOF is reached
+con <- set_eof_check(con, eof_check = "warn")
+read_uint8(con, n = 12)
+
+close(con)
+\dontshow{\}) # examplesIf}
 }
+\seealso{
+Other connection configuration functions: 
+\code{\link{set_bounds_check}()},
+\code{\link{set_endian}()},
+\code{\link{set_integer_promotion}()},
+\code{\link{set_na_check}()}
+}
+\concept{connection configuration functions}

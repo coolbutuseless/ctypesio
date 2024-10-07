@@ -31,3 +31,12 @@ write_raw(con, as.raw(1:4))
 write_raw(con, 1:4) 
 close(con)
 }
+\seealso{
+Other data output functions: 
+\code{\link{fprintf}()},
+\code{\link{write_f64}()},
+\code{\link{write_hex}()},
+\code{\link{write_uint8}()},
+\code{\link{write_utf8}()}
+}
+\concept{data output functions}

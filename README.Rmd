@@ -24,36 +24,60 @@ library(ctypesio)
 
 `{ctypesio}` provides functions for reading/writing standard C types from connections.
 
-These operations are useful when parsing binary file types.
+Motivation:  I wanted to be able to read/write some binary data files not currently 
+supported by R.  I needed more robust error-handling, compatibility with 
+C types and a better experience than just using `readBin()` directly.
+
 
 Key features:
 
-* Persitant defaults per-connection for:
+* Read 8, 16, 32, 64 signed and unsigned integers
+* Read 16, 32 and 64bit floating point values
+* Support for integer types which contain values outside the range of
+  R's integer type
+* Support for 16-bit floating point numbers.
+* Persistant information is stored on the connection for how to handle:
     * Endianness
     * Bounds checking
     * EOF behaviour
     * NA checking
-* Support for integer types which contain values outside the range of
-  R's integer type (which is 32-bit signed)
-* Support for 16-bit floating point numbers using IEEE half-precition
-  and [bfloat](https://en.wikipedia.org/wiki/Bfloat16_floating-point_format) variants.
 
 ## What's in the box
 
 * Floating point numbers
-    * `read_f64()`, `write_f64()` etc.  read/write double-, single- and half-precision floats
+    * read/write double-, single- and half-precision floats
+    * `read_f64()`, `write_f64()` `read_f32()`, `write_f32()`, `read_f16()`, `write_f16()`
+    * Aliased functions for: `read_dbl()`, `write_dbl()`, `read_float()`, `write_float()`, 
+      `read_half()`, `write_half()`
     * `read_bfloat()` read 16-bit [bfloat](https://en.wikipedia.org/wiki/Bfloat16_floating-point_format) numbers
 * Integers
-    * `read_uint8()`, `write_uint8()` etc for reading signed/unsigned 8, 16, 32, 64-bit
+    * read/write signed/unsigned 8, 16, 32, 64-bit integers
+    * `read_uint8()`, `write_uint8()`, `read_uint16()`, `write_uint16()`, `read_uint16()`, `write_uint16()`,
+    `read_uint16()`, `write_uint16()`
       integers
-    * For types which don't fit in a standard R integer (e.g. `uint64`) there are options
-      to promote this to double, hexadecimal, `bit64::integer64` or read as a raw vector
-* Other
+    * For types which don't fit in a standard R integer (e.g. `uint64`) values can be promoted to:
+        * double
+        * hexadecimal string
+        * `bit64::integer64` (this is a signed 64bit integer)
+        * raw vector
+* String handling
     * `read_str()`, `read_str_raw()`, `read_utf8()`, `read_utf8_raw()`, 
        `write_utf8()`, `write_utf8_raw()`
+    * `scan_dbl()`, `scan_int()`, `scan_str()` are wrappers around 
+      R's `scan()` 
+    * `fprintf()`, `fprintf_raw()`
+    * Functions with the suffix `_raw` read/write strings which are not
+      nul-terminated
+* Raw bytes       
     * `read_raw()`, `write_raw()` Read/write raw bytes
     * `read_hex()`, `write_hex()` Read/write bytes as hex strings
 * Connection configuration
+    * Set persistent configuration operations on the connection so that they 
+      do not need to be re-specified for every read/write operation i.e.
+        * Endianness
+        * Bounds checking
+        * EOF behaviour
+        * NA checking
     * `set_endian()` set the default *endianness* for all operations on this
        connection.  Can be over-ridden within each function by specifying 
        `endian` argument. If not specified on the connectino or in 

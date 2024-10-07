@@ -13,7 +13,9 @@ set_integer_promotion(con, uint32 = "dbl", int64 = "dbl", uint64 = "dbl")
 functions.}
 
 \item{uint32, int64, uint64}{specifiy separate promotion methods for these types
-One of: 'dbl', 'hex', 'raw' and 'bit64' (for 64-bit types only) Default: 'dbl'
+One of: 'dbl', 'hex', 'raw' and 'bit64' (for 64-bit types only) Default: 'dbl'.
+This default may be over-ridden by specifying
+the \code{promote} argument when calling individual functions.
 \describe{
   \item{\code{dbl}}{Read in integers as doubles. Integer values above 2^53
   will lose precision.}
@@ -34,6 +36,25 @@ Tag a connection with the preferred integer promotion method for types
 larger that R's integer type i.e. uint32, uint64, int64
 }
 \examples{
-con <- textConnection("hello")
-con <- set_integer_promotion("big")
+# Open a connection and configure it so all 'uint32' values are 
+# read as floating point and all all 'uint64' values are read as hexadecimal strings
+con <- rawConnection(as.raw(c(1:7, 0, 1:7, 0, 1:7, 0, 1:7, 0)), "rb")
+con <- set_integer_promotion(con, uint32 = "dbl", uint64 = "hex")
+
+# Future reads of uint64 will return hex strings
+read_uint64(con, n = 2)
+
+# Unless over-ridden during the read
+read_uint64(con, n = 1, promote = "dbl")
+
+close(con)
+
 }
+\seealso{
+Other connection configuration functions: 
+\code{\link{set_bounds_check}()},
+\code{\link{set_endian}()},
+\code{\link{set_eof_check}()},
+\code{\link{set_na_check}()}
+}
+\concept{connection configuration functions}

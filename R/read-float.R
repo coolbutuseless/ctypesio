@@ -28,6 +28,8 @@
 #' read_f64(con, n = 1)
 #' read_f16(con, n = 4)
 #' close(con)
+#' 
+#' @family data input functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_f64 <- function(con, n = 1, endian = NULL) {

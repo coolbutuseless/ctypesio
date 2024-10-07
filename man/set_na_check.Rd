@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{set_na_check}
 \alias{set_na_check}
-\title{Check bounds on values about to be written fit into given type}
+\title{Check for NAs in values before writing}
 \usage{
 set_na_check(con, na_check)
 }
@@ -11,11 +11,55 @@ set_na_check(con, na_check)
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
-\item{na_check}{one of: ignore, warn, error}
+\item{na_check}{Default NA checking behaviour. One of: 'ignore', 'warn', 'error'
+Default: 'error'. 
+This default may be over-ridden by specifying
+the \code{na_check} argument when calling individual functions.
+\describe{
+  \item{\code{ignore}}{No explicit checks will be made for
+  NA values
+  The underlying R functions may still do checking.
+  }
+  \item{\code{warn}}{Explicit checks will be made for
+  NA values before writing.
+  If any NAs are prsent, then a \code{warning()} will be issued.
+  }
+  \item{\code{error}}{Explicit checks will be made for
+  NA values before writing.
+  If any NAs are prsent, then an error will be raised.
+  }
+}}
 }
 \value{
 Modified connection object
 }
 \description{
-Check bounds on values about to be written fit into given type
+For the majority of binary file formats, there is never the need to 
+store or retrieve an \code{NA} value.  The default behaviour of this
+package is to raise an error if any attempt is made to write an \code{NA}
+to file.  Set this option to \code{"warn"} or \code{"ignore"} to modify this.
 }
+\examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# Open a connection and configure it so any attempt to write an NA
+# value will cause a warning only (the default behaviour is to raise an error)
+con <- rawConnection(raw(), "wb")
+con <- set_na_check(con, na_check = "warn")
+
+# This write should work without issues
+write_dbl(con, c(1, 2, 3, 4))
+
+# This write will cause a warning
+write_dbl(con, c(1, 2, 3, NA))
+
+close(con)
+\dontshow{\}) # examplesIf}
+}
+\seealso{
+Other connection configuration functions: 
+\code{\link{set_bounds_check}()},
+\code{\link{set_endian}()},
+\code{\link{set_eof_check}()},
+\code{\link{set_integer_promotion}()}
+}
+\concept{connection configuration functions}

@@ -45,3 +45,12 @@ scan_int(con)
 scan_dbl(con)
 close(con)
 }
+\seealso{
+Other data input functions: 
+\code{\link{read_f64}()},
+\code{\link{read_hex}()},
+\code{\link{read_raw}()},
+\code{\link{read_str}()},
+\code{\link{read_uint8}()}
+}
+\concept{data input functions}

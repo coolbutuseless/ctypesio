@@ -19,6 +19,7 @@
 #' con <- rawConnection(as.raw(1:4))
 #' read_hex(con, n = 2, size = 2, endian = "big")
 #' close(con)
+#' @family data input functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_hex <- function(con, n = 1, size = 1, endian = NULL) {
@@ -41,6 +42,7 @@ read_hex <- function(con, n = 1, size = 1, endian = NULL) {
 #' con <- file(tempfile(), "wb")
 #' write_hex(con, c("ff80", "0102"))
 #' close(con)
+#' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_hex <- function(con, x, endian = NULL) {

@@ -10,6 +10,7 @@
 #' con <- rawConnection(charToRaw("hello12.3"))
 #' read_raw(con, 5)
 #' close(con)
+#' @family data input functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_raw <- function(con, n = 1) {
@@ -48,6 +49,7 @@ read_raw <- function(con, n = 1) {
 #' con <- rawConnection(charToRaw("hello12.3"))
 #' read_utf8_raw(con, 3)
 #' close(con)
+#' @family data input functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 read_str <- function(con) {
