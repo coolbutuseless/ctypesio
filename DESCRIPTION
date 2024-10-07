@@ -1,12 +1,12 @@
 Package: ctypesio
 Type: Package
-Title: C Types
-Version: 0.1.0
+Title: Read and Write C Types
+Version: 0.1.0.9000
 Authors@R: c(
     person("Mike", "Cheng", role = c("aut", "cre", 'cph'), email = "mikefc@coolbutuseless.com")
     )
 Maintainer: Mike Cheng <mikefc@coolbutuseless.com>
-Description: Read C types from a connection.
+Description: Read and write C types from a connection.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

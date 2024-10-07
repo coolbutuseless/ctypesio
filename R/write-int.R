@@ -85,9 +85,8 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
       stop("Can only write integer64 as 'int64' or 'uint64'")
     }
     
-    raw_vec <- .Call(integer64_to_raw_, x, big_endian = (endian == 'big'));
-    
-    write_raw(con, raw_vec, bounds_check = FALSE)
+    x <- unclass(x)
+    write_dbl(con, x, bounds_check = FALSE)
     return(con)
   }
   

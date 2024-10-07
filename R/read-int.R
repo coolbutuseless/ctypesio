@@ -159,7 +159,10 @@ read_int64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check =
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 8, endian = endian)
   } else if (promote == 'bit64') {
-    res <- .Call(raw_to_integer64_, raw_vec, big_endian = (endian == 'big'))
+    rcon <- rawConnection(raw_vec, "rb")
+    res <- read_dbl(rcon, n = n, endian = endian)
+    close(rcon)
+    class(res) <- 'integer64'
   } else {
     stop("Unknown promotion method: ", promote)
   }
@@ -188,7 +191,10 @@ read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check 
   } else if (promote == 'hex') {
     res <- raw_to_hex(raw_vec, size = 8, endian = endian)
   } else if (promote == 'bit64') {
-    res <- .Call(raw_to_integer64_, raw_vec, big_endian = (endian == 'big'))
+    rcon <- rawConnection(raw_vec, "rb")
+    res <- read_dbl(rcon, n = n, endian = endian)
+    close(rcon)
+    class(res) <- 'integer64'
     # bit64::integer64 is a signed type.
     # So if we ever get back a -ve number when trying to read an uint64, it
     # means that the value is above 2^63 and not properly representable
