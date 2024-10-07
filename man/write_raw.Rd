@@ -16,7 +16,7 @@ functions.}
 \item{bounds_check}{Check values lie within bounds of the given type.
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
-(where the user has used \code{set_bounds_check()}) or otherwise 
+(where the user has used \code{\link{set_bounds_check}()}) or otherwise 
 will be set to \code{"error"}}
 }
 \value{

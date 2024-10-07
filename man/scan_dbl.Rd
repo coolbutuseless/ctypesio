@@ -27,6 +27,9 @@ functions.}
 Value of the given type
 }
 \description{
+A lightweight wrapper around the standard \code{\link{scan}()} function.
+}
+\details{
 These functions are useful when the numeric values are encoded as strings written 
 to the file, rather than as binary data.  Values must be delimited
 by whitespace or other specified separator.  See documentation for 

@@ -25,8 +25,10 @@ read_raw <- function(con, n = 1) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Read a character string from a connection
 #' 
-#' Read character string from a connection. The string may or may not be 
-#' nul-terminated and extra effort can be expended to read UTF8 strings.
+#' Read character string from a connection. 
+#' 
+#' Functions which have a suffix of \code{_raw} are for handling character 
+#' strings without a nul-terminator.
 #' 
 #' 
 #' @inheritParams read_uint8

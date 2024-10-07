@@ -1,7 +1,4 @@
 
-
-
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Read integer data from a connection
 #' 
@@ -23,19 +20,21 @@
 #'        Possible values: 'big' or 'little'.  
 #'        Default: NULL indicates that
 #'        endian option should be retrieved from the connection object if possible
-#'        (where the user has used \code{set_endian()}) or otherwise 
+#'        (where the user has used \code{\link{set_endian}()}) or otherwise 
 #'        will be set to \code{"little"}
 #' @param n Number of elements to read. Default: 1
 #' @param promote How should integer types be promoted when the type contains
 #'        values larger than R's signed integer type. Possible options 'dbl', 'raw', 'hex'.
 #'        Default: NULL indicates that
 #'        this option should be retrieved from the connection object if possible
-#'        (where the user has used \code{set_integer_promotion()}) or otherwise 
+#'        (where the user has used \code{\link{set_integer_promotion}()}) or otherwise 
 #'        will be set to \code{"dbl"}.
 #'        \describe{
 #'          \item{\code{dbl}}{Read integer values as double precision floating point}
 #'          \item{\code{hex}}{Read integers as character vector of hexadecimal strings}
 #'          \item{\code{raw}}{Read integer value as a sequence of raw bytes}
+#'          \item{\code{bit64}}{Read integer value as a vector of 
+#'                type \code{bit64::integer64}}
 #'        }
 #' @return Integer data. Usually in standard R integer vector but depending on 
 #'         the \code{promote} option may be returned in alternate formats
@@ -202,44 +201,5 @@ read_uint64 <- function(con, n = 1, endian = NULL, promote = NULL, bounds_check 
   
   res
 }
-
-
-if (FALSE) {
-  
-  con <- rawConnection(as.raw(1:255))
-  read_uint32(con, n = 4, promote = 'hex')
-  close(con)
-  
-}
-
-
-if (FALSE) {
-  data <- as.raw(c(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x8f))
-  con <- rawConnection(data, 'rb')
-  x <- read_uint64(con, n = 1, promote = 'bit64')
-  x
-  close(con)
-  
-  
-  
-  con <- rawConnection(raw(), "wb")
-  write_uint8(con, c(255, 256, -1))
-  close(con)
-  
-  
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 

@@ -26,8 +26,11 @@ functions.}
 single character string
 }
 \description{
-Read character string from a connection. The string may or may not be 
-nul-terminated and extra effort can be expended to read UTF8 strings.
+Read character string from a connection.
+}
+\details{
+Functions which have a suffix of \code{_raw} are for handling character 
+strings without a nul-terminator.
 }
 \examples{
 con <- rawConnection(c(charToRaw("hello12.3"), as.raw(0)))

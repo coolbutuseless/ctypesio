@@ -146,12 +146,12 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
 #' @param bounds_check Check values lie within bounds of the given type.
 #'        Default: NULL indicates that
 #'        this option should be retrieved from the connection object if possible
-#'        (where the user has used \code{set_bounds_check()}) or otherwise 
+#'        (where the user has used \code{\link{set_bounds_check}()}) or otherwise 
 #'        will be set to \code{"error"}
 #' @param na_check Check for NAs in the data to be written.
 #'        Default: NULL indicates that
 #'        this option should be retrieved from the connection object if possible
-#'        (where the user has used \code{set_na_check()}) or otherwise 
+#'        (where the user has used \code{\link{set_na_check}()}) or otherwise 
 #'        will be set to \code{"error"}
 #'        
 #' @return The original connection is returned invisibly.
@@ -246,81 +246,5 @@ write_int64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = N
                        bounds_check = bounds_check, na_check = na_check)
   invisible(con)
 }
-
-
-
-
-
-
-
-
-if (FALSE) {
-  
-  con <- rawConnection(raw(), open = "w")
-  write_int8(con, c(-1, 3, 5))  
-  dat <- rawConnectionValue(con)  
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_uint8(con, 3)
-  read_uint8(con, 1)
-  close(con)
-  
-}
-
-
-
-if (FALSE) {
-  
-  con <- rawConnection(as.raw(1:4), open = "rb")
-  x <- read_uint32(con, 1, promote = 'hex') 
-  close(con)
-  x
-  
-  con <- rawConnection(raw(), open = "wb")
-  write_uint32(con, x)
-  dat <- rawConnectionValue(con)
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_f64(con, 3)
-  read_uint8(con, 1)
-  close(con)
-  
-}
-
-
-
-if (FALSE) {
-  
-  ints <- bit64::as.integer64(1:4)
-  ints
-  
-  con <- rawConnection(raw(), open = "w")
-  write_int64(con, ints)
-  dat <- rawConnectionValue(con)  
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_uint64(con, 4)
-  close(con)
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

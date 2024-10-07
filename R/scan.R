@@ -3,6 +3,8 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Read values encoded as characters strings
 #' 
+#' A lightweight wrapper around the standard \code{\link{scan}()} function.
+#' 
 #' These functions are useful when the numeric values are encoded as strings written 
 #' to the file, rather than as binary data.  Values must be delimited
 #' by whitespace or other specified separator.  See documentation for 
@@ -75,6 +77,7 @@ scan_str <- function(con, n = 1, quiet = TRUE, ...) {
 #' @examples
 #' con <- rawConnection(raw(), "wb")
 #' fprintf(con, "%i,%6.2f", 1, 3.14159)
+#' close(con)
 #' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

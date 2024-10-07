@@ -1,9 +1,6 @@
 
-
-
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Read floating point values
+#' Read floating point values from a connection
 #' 
 #' Read floating point numbers into a standard R vector of doubles
 #' 
@@ -21,12 +18,13 @@
 #' 
 #' @inheritParams read_uint8
 #' @return vector of double precision floating point numbers
+#' 
 #' @examples
 #' # Raw vector with 16 bytes (128 bits) of dummy data
 #' data <- as.raw(1:16)
 #' con <- rawConnection(data, 'rb')
-#' read_f64(con, n = 1)
-#' read_f16(con, n = 4)
+#' read_f64(con, n = 1) # Read a 64-bit double-precision number
+#' read_f16(con, n = 4) # Read 4 x 16-bit half-precision number
 #' close(con)
 #' 
 #' @family data input functions
@@ -222,21 +220,4 @@ bfloat_to_rdbl <- function(x, endian = 'little') {
   
   part1 * part2 * part3
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

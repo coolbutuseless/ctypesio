@@ -33,6 +33,9 @@ write_raw <- function(con, x, bounds_check = NULL) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Write UTF8 string
 #' 
+#' \code{write_utf8_raw()} writes the string without a nul-terminator.
+#' \code{write_utf8()} includes a nul-terminator
+#' 
 #' @inheritParams write_uint8
 #' @param x single character string
 #' 
@@ -65,77 +68,5 @@ write_utf8_raw <- function(con, x) {
   
   invisible(con)
 }
-
-
-
-
-
-
-
-
-
-
-
-if (FALSE) {
-  
-  con <- rawConnection(raw(), open = "w")
-  write_int8(con, c(-1, 3, 5))  
-  dat <- rawConnectionValue(con)  
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_uint8(con, 3)
-  read_uint8(con, 1)
-  close(con)
-  
-}
-
-
-
-if (FALSE) {
-  
-  con <- rawConnection(raw(), open = "w")
-  write_f16(con, c(1, 2)) 
-  dat <- rawConnectionValue(con)  
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_f64(con, 3)
-  read_uint8(con, 1)
-  close(con)
-  
-}
-
-
-
-if (FALSE) {
-  
-  con <- rawConnection(raw(), open = "w")
-  write_utf8(con, "hello there")
-  dat <- rawConnectionValue(con)  
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_utf8(con)
-  read_uint8(con, 1)
-  close(con)
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

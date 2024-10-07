@@ -17,7 +17,7 @@ functions.}
 Possible values: 'big' or 'little'.  
 Default: NULL indicates that
 endian option should be retrieved from the connection object if possible
-(where the user has used \code{set_endian()}) or otherwise 
+(where the user has used \code{\link{set_endian}()}) or otherwise 
 will be set to \code{"little"}}
 }
 \value{

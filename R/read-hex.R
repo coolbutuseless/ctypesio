@@ -1,12 +1,14 @@
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Read raw bytes as a single hexadecimal string
+#' Read bytes as hexadecimal strings
 #' 
 #' @inheritParams read_uint8
-#' @param size size in bytes of each element to read. Default: 1
 #' 
-#' @return Single character string
+#' @param n Number of hexadecimal strings to read. Default: 1
+#' @param size size in bytes of each string. Default: 1
+#' 
+#' @return vector of hexadecimal character strings
 #' @examples
 #' con <- rawConnection(as.raw(1:4))
 #' read_hex(con, n = 4, size = 1)

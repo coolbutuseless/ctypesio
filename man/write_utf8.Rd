@@ -20,7 +20,8 @@ functions.}
 The original connection is returned invisibly.
 }
 \description{
-Write UTF8 string
+\code{write_utf8_raw()} writes the string without a nul-terminator.
+\code{write_utf8()} includes a nul-terminator
 }
 \examples{
 con <- file(tempfile(), "wb")

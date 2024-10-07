@@ -166,24 +166,3 @@ rdbl_to_chalf <- function(x, endian = 'little') {
 }
 
 
-
-
-
-
-
-if (FALSE) {
-  
-  con <- rawConnection(raw(), open = "w")
-  write_f16(con, c(-1, 3, 50000, -60000))  
-  dat <- rawConnectionValue(con)  
-  close(con)
-  dat
-  
-  con <- rawConnection(dat, open = 'r')
-  read_f16(con, 4)
-  read_uint8(con, 1)
-  close(con)
-  
-}
-
-

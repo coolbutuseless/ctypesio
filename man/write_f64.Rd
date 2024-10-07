@@ -32,19 +32,19 @@ functions.}
 Possible values: 'big' or 'little'.  
 Default: NULL indicates that
 endian option should be retrieved from the connection object if possible
-(where the user has used \code{set_endian()}) or otherwise 
+(where the user has used \code{\link{set_endian}()}) or otherwise 
 will be set to \code{"little"}}
 
 \item{bounds_check}{Check values lie within bounds of the given type.
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
-(where the user has used \code{set_bounds_check()}) or otherwise 
+(where the user has used \code{\link{set_bounds_check}()}) or otherwise 
 will be set to \code{"error"}}
 
 \item{na_check}{Check for NAs in the data to be written.
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
-(where the user has used \code{set_na_check()}) or otherwise 
+(where the user has used \code{\link{set_na_check}()}) or otherwise 
 will be set to \code{"error"}}
 }
 \value{

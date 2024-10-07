@@ -8,7 +8,7 @@
 \alias{read_dbl}
 \alias{read_float}
 \alias{read_half}
-\title{Read floating point values}
+\title{Read floating point values from a connection}
 \usage{
 read_f64(con, n = 1, endian = NULL)
 
@@ -35,7 +35,7 @@ functions.}
 Possible values: 'big' or 'little'.  
 Default: NULL indicates that
 endian option should be retrieved from the connection object if possible
-(where the user has used \code{set_endian()}) or otherwise 
+(where the user has used \code{\link{set_endian}()}) or otherwise 
 will be set to \code{"little"}}
 }
 \value{
@@ -61,8 +61,8 @@ Read floating point numbers into a standard R vector of doubles
 # Raw vector with 16 bytes (128 bits) of dummy data
 data <- as.raw(1:16)
 con <- rawConnection(data, 'rb')
-read_f64(con, n = 1)
-read_f16(con, n = 4)
+read_f64(con, n = 1) # Read a 64-bit double-precision number
+read_f16(con, n = 4) # Read 4 x 16-bit half-precision number
 close(con)
 
 }

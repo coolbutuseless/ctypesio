@@ -33,6 +33,7 @@ writes a nul-terminator
 \examples{
 con <- rawConnection(raw(), "wb")
 fprintf(con, "\%i,\%6.2f", 1, 3.14159)
+close(con)
 }
 \seealso{
 Other data output functions: 

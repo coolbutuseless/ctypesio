@@ -2,7 +2,7 @@
 % Please edit documentation in R/endian.R
 \name{aperm_array_to_vector}
 \alias{aperm_array_to_vector}
-\title{Swizzle an R array to a linear vector of data}
+\title{Permute an R array to a linear vector of data}
 \usage{
 aperm_array_to_vector(x, dst, flipy = FALSE)
 }
@@ -21,15 +21,12 @@ be the final element.}
 vector
 }
 \description{
-Swizzle an R array to a linear vector of data
+Permute an R array to a linear vector of data
 }
 \examples{
-mat <- matrix(c(
-  'r0', 'g0', 'b0',   'r1', 'g1', 'b1',   'r2', 'g2', 'b2',   
-  'r3', 'g3', 'b3',   'r4', 'g4', 'b4',   'r5', 'g5', 'b5'
-), nrow = 2, ncol = 9,  byrow = TRUE)
-mat
-aperm_array_to_vector(mat, dst = c('rows', 'cols', 'planes'))
+arr <- array(rep(c('r', 'g', 'b'), each = 6), c(2, 3, 3))
+arr
+aperm_array_to_vector(arr, dst = c('planes', 'cols', 'rows'))
 }
 \seealso{
 Other data permutation functions: 

@@ -36,7 +36,7 @@ flip_endian <- function(x, size) {
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Swizzle a linear vector of data into an R array
+#' Permute a linear vector of data into an R array
 #' 
 #' @param x vector
 #' @param src Specification of source dimensions in the order of presentation
@@ -115,7 +115,7 @@ aperm_vector_to_array <- function(x, src, flipy = FALSE, simplify_matrix = TRUE)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Swizzle an R array to a linear vector of data
+#' Permute an R array to a linear vector of data
 #' 
 #' @param x array
 #' @param dst Specification of destination dimensions in the order of presentation
@@ -127,12 +127,9 @@ aperm_vector_to_array <- function(x, src, flipy = FALSE, simplify_matrix = TRUE)
 #'
 #' @return vector
 #' @examples
-#' mat <- matrix(c(
-#'   'r0', 'g0', 'b0',   'r1', 'g1', 'b1',   'r2', 'g2', 'b2',   
-#'   'r3', 'g3', 'b3',   'r4', 'g4', 'b4',   'r5', 'g5', 'b5'
-#' ), nrow = 2, ncol = 9,  byrow = TRUE)
-#' mat
-#' aperm_array_to_vector(mat, dst = c('rows', 'cols', 'planes'))
+#' arr <- array(rep(c('r', 'g', 'b'), each = 6), c(2, 3, 3))
+#' arr
+#' aperm_array_to_vector(arr, dst = c('planes', 'cols', 'rows'))
 #' @family data permutation functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,104 +174,3 @@ aperm_array_to_vector <- function(x, dst, flipy = FALSE) {
 }
 
 
-
-
-
-
-if (FALSE) {
-  
-  # Linear data read from file. Structure is known to be packed RGB
-  # pixels in row-major format.
-  x <- vec <- c(
-    'r0', 'g0', 'b0',   'r1', 'g1', 'b1',   'r2', 'g2', 'b2',   'r3', 'g3', 'b3', 
-    'r4', 'g4', 'b4',   'r5', 'g5', 'b5',   'r6', 'g6', 'b6',   'r7', 'g7', 'b7', 
-    'r8', 'g8', 'b8',   'r9', 'g9', 'b9',   'ra', 'ga', 'ba',   'rb', 'gb', 'bb'
-  )
-  
-  # Permute from linear to an R column-major format with 3 planes
-  aperm_vector_to_array(vec, src = c(planes = 3, cols = 4, rows = 3))
-  aperm_vector_to_array(vec, src = c(planes = 3, cols = 4, rows = 3), flipy = TRUE)
-
-  # Ordering of elements in 'src' argument determine permutation ordering
-  # The following will transpose the data
-  aperm_vector_to_array(vec, src = c(planes = 3, rows = 4, cols = 3))
-  
-  
-  
-  
-  arr <- x <- aperm_vector_to_array(vec, src = c(planes = 3, cols = 4, rows = 3))
-  
-  aperm_array_to_vector(x, dst = c('planes', 'cols', 'rows'))
-  
-  
-  x <- c(
-    'r0', 'g0', 'b0',   'r1', 'g1', 'b1',   'r2', 'g2', 'b2',   
-    'r3', 'g3', 'b3',   'r4', 'g4', 'b4',   'r5', 'g5', 'b5'
-  )
-  aperm_vector_to_array(x, src = c(planes = 3, cols = 3, rows = 2))
-  
-  
-  
-  
-  mat <- array(letters[1:12], c(2, 3, 2))
-  mat
-  aperm_array_to_vector(mat, dst = c('planes', 'cols', 'rows'))
-  
-  
-  
-  
-}
-
-
-
-
-if (FALSE) {
-  
-  
-  flip_chunked_yumechi <- function(xs, size) {
-    xs |>
-      split(ceiling(seq_along(xs) / size)) |>
-      purrr::map(rev) |>
-      purrr::reduce(c)
-  }
-  
-  
-  
-  flip_chunked_yumechi2 <- function(xs, size) {
-    xs |>
-      split(ceiling(seq_along(xs) / size)) |>
-      lapply(rev) |> 
-      unlist(recursive = FALSE, use.names = FALSE)
-  }
-  
-  
-  vec <- c(1, 2, 3, 4, 5, 6, 7, 8)
-  all.equal(flip_endian(vec, 1), vec)
-  all.equal(flip_endian(vec, 2), c(2, 1, 4, 3, 6, 5, 8, 7))
-  all.equal(flip_endian(vec, 4), c(4, 3, 2, 1, 8, 7, 6, 5))
-  
-  
-  all.equal(flip_chunked_yumechi(vec, 1), vec)
-  all.equal(flip_chunked_yumechi(vec, 2), c(2, 1, 4, 3, 6, 5, 8, 7))
-  all.equal(flip_chunked_yumechi(vec, 4), c(4, 3, 2, 1, 8, 7, 6, 5))
-  
-  all.equal(flip_chunked_yumechi2(vec, 1), vec)
-  all.equal(flip_chunked_yumechi2(vec, 2), c(2, 1, 4, 3, 6, 5, 8, 7))
-  all.equal(flip_chunked_yumechi2(vec, 4), c(4, 3, 2, 1, 8, 7, 6, 5))
-  
-  
-  vec <- integer(1000)
-  bench::mark(
-    flip_endian(vec, 4),
-    flip_chunked_yumechi(vec, 4),
-    flip_chunked_yumechi2(vec, 4),
-    flip_chunked_yumechi3(vec, 4),
-    flip_endian(vec, 250),
-    flip_chunked_yumechi(vec, 250),
-    flip_chunked_yumechi2(vec, 250),
-    flip_chunked_yumechi3(vec, 250)
-  )
-  
-  
-  
-}

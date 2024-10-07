@@ -2,7 +2,7 @@
 % Please edit documentation in R/endian.R
 \name{aperm_vector_to_array}
 \alias{aperm_vector_to_array}
-\title{Swizzle a linear vector of data into an R array}
+\title{Permute a linear vector of data into an R array}
 \usage{
 aperm_vector_to_array(x, src, flipy = FALSE, simplify_matrix = TRUE)
 }
@@ -25,7 +25,7 @@ should this be simplified to a matrix? Default: TRUE}
 array or matrix
 }
 \description{
-Swizzle a linear vector of data into an R array
+Permute a linear vector of data into an R array
 }
 \examples{
 # Convert a vector of packed RGB data to an array with 3 planes

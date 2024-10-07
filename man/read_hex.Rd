@@ -2,7 +2,7 @@
 % Please edit documentation in R/read-hex.R
 \name{read_hex}
 \alias{read_hex}
-\title{Read raw bytes as a single hexadecimal string}
+\title{Read bytes as hexadecimal strings}
 \usage{
 read_hex(con, n = 1, size = 1, endian = NULL)
 }
@@ -11,22 +11,22 @@ read_hex(con, n = 1, size = 1, endian = NULL)
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
-\item{n}{Number of elements to read. Default: 1}
+\item{n}{Number of hexadecimal strings to read. Default: 1}
 
-\item{size}{size in bytes of each element to read. Default: 1}
+\item{size}{size in bytes of each string. Default: 1}
 
 \item{endian}{Ordering of bytes within the file when reading multi-byte values.
 Possible values: 'big' or 'little'.  
 Default: NULL indicates that
 endian option should be retrieved from the connection object if possible
-(where the user has used \code{set_endian()}) or otherwise 
+(where the user has used \code{\link{set_endian}()}) or otherwise 
 will be set to \code{"little"}}
 }
 \value{
-Single character string
+vector of hexadecimal character strings
 }
 \description{
-Read raw bytes as a single hexadecimal string
+Read bytes as hexadecimal strings
 }
 \examples{
 con <- rawConnection(as.raw(1:4))
