@@ -98,7 +98,7 @@ aperm_vector_to_array <- function(x, src, flipy = FALSE, simplify_matrix = TRUE)
   # Flip Y?
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (isTRUE(flipy)) {
-    res <- res[nrow(res):1 , , ]
+    res <- res[nrow(res):1 , , , drop = FALSE]
   }
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -162,7 +162,7 @@ aperm_array_to_vector <- function(x, dst, flipy = FALSE) {
   # Flip Y?
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (isTRUE(flipy)) {
-    x <- x[nrow(x):1 , , ]
+    x <- x[nrow(x):1 , , , drop = FALSE]
   }
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

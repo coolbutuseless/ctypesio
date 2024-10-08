@@ -18,3 +18,22 @@ test_that("aperm() works", {
   expect_identical(arr2, arr)
     
 })
+
+
+test_that("aperm_array_to_vector works with a matrix", {
+  
+  mat <- matrix(1:6, 2, 3)
+  vec <- aperm_array_to_vector(mat, dst = c('planes', 'cols', 'rows'), flipy = TRUE)
+  vec
+  expect_equal(
+    vec, 
+    c(2, 4, 6, 1, 3, 5)
+  )
+  
+  mat2 <- aperm_vector_to_array(vec, src = c(planes = 1, cols = 3, rows = 2), flipy = TRUE)
+  expect_identical(
+    mat2, 
+    mat
+  )
+  
+})
