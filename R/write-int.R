@@ -98,11 +98,16 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     
     stopifnot(!anyNA(x))
     
+    # Remove 0x prefix if present
+    x <- ifelse(startsWith(x, '0x'), substr(x, start = 3, stop = nchar(x)), x)
+    
     # Check that hex strings are the correct length
     lens <- nchar(x)
-    if (any(lens) != width * 2) {
-      msg <- sprintf("Writing '%s' from hex string requires nchar(x) = %i.  Found: %s",
+    
+    if (!all(lens == width * 2)) {
+      msg <- sprintf("Writing '%s' from hex string requires nchar(x) == %i.  Actual lengths: %s",
                      type, width * 2, deparse1(sort(unique(lens))))
+      stop(msg)
     }
     
     # Convert all hex to a single raw vector

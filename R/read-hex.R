@@ -115,7 +115,10 @@ hex_to_raw <- function(x, endian = "little") {
   nibbles <- unlist(nibbles, use.names = FALSE)
   stopifnot(length(nibbles) %% 2 == 0)
   nibbles <- match(nibbles, c(0:9, letters[1:6])) - 1L
-  stopifnot(!anyNA(nibbles))
+  if (anyNA(nibbles)) {
+    stop("Hexadecimal string contains characters other than 0123456789abcdef: ", 
+         deparse1(x))
+  }
   
   if (endian == "little") {
     bytes <- nibbles[c(FALSE, TRUE)] * 16 + nibbles[c(TRUE, FALSE)] 
