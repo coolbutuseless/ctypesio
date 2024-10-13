@@ -4,9 +4,17 @@
 \name{ctypesio-package}
 \alias{ctypesio}
 \alias{ctypesio-package}
-\title{ctypesio: Read and Write Standard C Types from Files, Connecctions and Raw Vectors}
+\title{ctypesio: Read and Write Standard C Types from Files, Connections and Raw Vectors}
 \description{
 Interacting with binary files can be difficult because R's types are a subset of what is generally supported by 'C'. This package provides a suite of functions for reading and writing binary data (with files, connections, and raw vectors) using 'C' type descriptions. These functions convert data between 'C' types and R types while checking for values outside the type limits, 'NA' values, etc.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/coolbutuseless/ctypesio}
+  \item Report bugs at \url{https://github.com/coolbutuseless/ctypesio/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Mike Cheng \email{mikefc@coolbutuseless.com} [copyright holder]

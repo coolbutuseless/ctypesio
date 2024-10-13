@@ -1,6 +1,6 @@
 Package: ctypesio
 Type: Package
-Title: Read and Write Standard C Types from Files, Connecctions and Raw Vectors
+Title: Read and Write Standard C Types from Files, Connections and Raw Vectors
 Version: 0.1.1
 Authors@R: c(
     person("Mike", "Cheng", role = c("aut", "cre", 'cph'), email = "mikefc@coolbutuseless.com"),
@@ -15,7 +15,6 @@ Description: Interacting with binary files can be difficult because R's types
     type limits, 'NA' values, etc.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
     knitr,
@@ -24,3 +23,5 @@ Suggests:
     jpeg
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://github.com/coolbutuseless/ctypesio
+BugReports: https://github.com/coolbutuseless/ctypesio/issues
