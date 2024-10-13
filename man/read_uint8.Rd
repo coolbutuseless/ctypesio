@@ -42,18 +42,24 @@ endian option should be retrieved from the connection object if possible
 (where the user has used \code{\link{set_endian}()}) or otherwise 
 will be set to \code{"little"}}
 
-\item{promote}{How should integer types be promoted when the type contains
-values larger than R's signed integer type. Possible options 'dbl', 'raw', 'hex'.
+\item{promote}{For 'uin32', 'int64' and 'uint64' types, the range of possible
+values exceeds R's standard integer type.  For these integer types, 
+values will be promoted to a different container type.
+Possible options 'dbl', 'raw', 'hex' and 'bit64'.
 Default: NULL indicates that
 this option should be retrieved from the connection object if possible
 (where the user has used \code{\link{set_integer_promotion}()}) or otherwise 
-will be set to \code{"dbl"}.
+will default to \code{"dbl"}.
 \describe{
-  \item{\code{dbl}}{Read integer values as double precision floating point}
+  \item{\code{dbl}}{Read integer values as double precision floating point. A 'double' will
+        hold integer values (without loss) from -(2^53) up to (2^53).  A 
+        further warning will be issued if an attempt is made to store 
+        an integer value that lies outside this range}
   \item{\code{hex}}{Read integers as character vector of hexadecimal strings}
   \item{\code{raw}}{Read integer value as a sequence of raw bytes}
   \item{\code{bit64}}{Read integer value as a vector of 
-        type \code{bit64::integer64}}
+        type \code{bit64::integer64}. This is valid only when reading
+        'int64' and 'uint64' types}
 }}
 
 \item{bounds_check}{Check values lie within bounds of the given type.

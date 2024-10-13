@@ -17,7 +17,7 @@ Default: 'error'.
 \describe{
   \item{\code{ignore}}{No explicit checks will be made for
   EOF.
-  The underlying R functions may still do checking.
+  The underlying R functions (e.g. \code{readBin()}, \code{writeBin()}) may still do checking.
   }
   \item{\code{warn}}{Explicit checks will be made for
   reading data at EOF.

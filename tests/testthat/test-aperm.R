@@ -37,3 +37,47 @@ test_that("aperm_array_to_vector works with a matrix", {
   )
   
 })
+
+
+
+test_that("aperm combinational check", {
+  
+  
+  nrows   <- 2
+  ncols   <- 3
+  nplanes <- 4
+  
+  arr <- array(c(paste0('r', 1:6), 
+                 paste0('g', 1:6), 
+                 paste0('b', 1:6),
+                 paste0('a', 1:6)), c(nrows, ncols, nplanes))
+  arr
+  
+  
+  # Convert to package RGB in column-major format
+  (v <- aperm_array_to_vector(arr, dst = c('planes', 'cols', 'rows')))
+  res <- aperm_vector_to_array(v, src = c(planes = 4, cols = 3, rows = 2))
+  expect_identical(res, arr)
+  
+  (v <- aperm_array_to_vector(arr, dst = c('planes', 'rows', 'cols')))
+  res <- aperm_vector_to_array(v, src = c(planes = 4, rows = 2, cols = 3))
+  expect_identical(res, arr)
+  
+  (v <- aperm_array_to_vector(arr, dst = c('cols', 'planes', 'rows')))
+  res <- aperm_vector_to_array(v, src = c(cols = 3, planes = 4, rows = 2))
+  expect_identical(res, arr)
+  
+  (v <- aperm_array_to_vector(arr, dst = c('cols', 'rows', 'planes')))
+  res <- aperm_vector_to_array(v, src = c(cols = 3, rows = 2, planes = 4))
+  expect_identical(res, arr)
+  
+  (v <- aperm_array_to_vector(arr, dst = c('rows', 'cols', 'planes')))
+  res <- aperm_vector_to_array(v, src = c(rows = 2, cols = 3, planes = 4))
+  expect_identical(res, arr)
+  
+  (v <- aperm_array_to_vector(arr, dst = c('rows', 'planes', 'cols')))
+  res <- aperm_vector_to_array(v, src = c(rows = 2, planes = 4, cols = 3))
+  expect_identical(res, arr)
+  
+  
+})

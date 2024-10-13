@@ -19,7 +19,7 @@ the \code{bounds_check} argument when calling individual functions.
 \describe{
   \item{\code{ignore}}{No explicit checks will be made for
   out-of-bound values.
-  The underlying R functions may still do checking.
+  The underlying R functions (e.g. \code{readBin()}, \code{writeBin()}) may still do checking.
   }
   \item{\code{warn}}{Explicit checks will be made for
   out-of-bound values.

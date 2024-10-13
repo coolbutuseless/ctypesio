@@ -131,7 +131,7 @@ get_promote_method <- function(con, promote, type) {
 #'        \describe{
 #'          \item{\code{ignore}}{No explicit checks will be made for
 #'          out-of-bound values.
-#'          The underlying R functions may still do checking.
+#'          The underlying R functions (e.g. \code{readBin()}, \code{writeBin()}) may still do checking.
 #'          }
 #'          \item{\code{warn}}{Explicit checks will be made for
 #'          out-of-bound values.
@@ -228,7 +228,7 @@ do_bounds_check <- function(x, bounds_check, lo, hi, lo_str = as.character(lo), 
 #'        \describe{
 #'          \item{\code{ignore}}{No explicit checks will be made for
 #'          EOF.
-#'          The underlying R functions may still do checking.
+#'          The underlying R functions (e.g. \code{readBin()}, \code{writeBin()}) may still do checking.
 #'          }
 #'          \item{\code{warn}}{Explicit checks will be made for
 #'          reading data at EOF.
@@ -322,15 +322,15 @@ do_eof_check <- function(con, n_requested, n_read) {
 #'        \describe{
 #'          \item{\code{ignore}}{No explicit checks will be made for
 #'          NA values
-#'          The underlying R functions may still do checking.
+#'          The underlying R functions (e.g. \code{readBin()}, \code{writeBin()}) may still do checking.
 #'          }
 #'          \item{\code{warn}}{Explicit checks will be made for
 #'          NA values before writing.
-#'          If any NAs are prsent, then a \code{warning()} will be issued.
+#'          If any NAs are present, then a \code{warning()} will be issued.
 #'          }
 #'          \item{\code{error}}{Explicit checks will be made for
 #'          NA values before writing.
-#'          If any NAs are prsent, then an error will be raised.
+#'          If any NAs are present, then an error will be raised.
 #'          }
 #'        }
 #' 

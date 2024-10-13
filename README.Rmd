@@ -22,12 +22,11 @@ library(ctypesio)
 [![R-CMD-check](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`{ctypesio}` provides functions for reading/writing standard C types from connections.
+`{ctypesio}` is a package fore reading and writing standard C types from connections or raw vectors.
 
 Motivation:  I wanted to be able to read/write some binary data files not currently 
 supported by R.  I needed more robust error-handling, compatibility with 
 C types and a better experience than just using `readBin()` directly.
-
 
 Key features:
 
@@ -35,12 +34,11 @@ Key features:
 * Read 16, 32 and 64bit floating point values
 * Support for integer types which contain values outside the range of
   R's integer type
-* Support for 16-bit floating point numbers.
 * Persistent information is stored on the connection for how to handle:
-    * Endianness
-    * Bounds checking
+    * endianness
+    * bounds checking
     * EOF behaviour
-    * NA checking
+    * `NA` checking
 
 ## What's in the box
 

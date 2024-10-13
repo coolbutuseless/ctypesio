@@ -24,9 +24,33 @@ vector
 Permute an R array to a linear vector of data
 }
 \examples{
-arr <- array(rep(c('r', 'g', 'b'), each = 6), c(2, 3, 3))
+# create a small RGBA array in R with each 
+# plane of the array holding a different colour channel
+  arr <- array(c(paste0('r', 1:6), 
+                 paste0('g', 1:6), 
+                 paste0('b', 1:6),
+                 paste0('a', 1:6)), c(2, 3, 4))
 arr
-aperm_array_to_vector(arr, dst = c('planes', 'cols', 'rows'))
+
+# A very common C ordering is packaged RGBA data in column major format
+# i.e. Iterate over: planes, then columns, then rows
+# i.e. 
+#    start at first element
+#    (plane1, plane2, plane3, plane4)
+#    go to next column
+#    (plane1, plane2, plane3, plane4)
+#    go to next column
+#    ...
+#    when last column is done
+#    do to next row
+
+# Convert to packed RGBA in column-major format
+vec <- aperm_array_to_vector(arr, dst = c('planes', 'cols', 'rows'))
+vec
+
+# To convert column-major packed RGBA to an R array, use the same ordering
+# for the dimensions, but also need to specify length along each dimension
+aperm_vector_to_array(vec, src = c(planes = 4, cols = 3, rows = 2))
 }
 \seealso{
 Other data permutation functions: 
