@@ -52,10 +52,19 @@ read_hex <- function(con, n = 1, size = 1, endian = NULL) {
 write_hex <- function(con, x, endian = NULL) {
   endian <- get_endian_method(con, endian)
   
-  raw_vec <- hex_to_raw(x, endian = endian)
+  if (is.raw(con)) {
+    raw_orig <- con
+    con <- raw()
+  }
   
-  write_raw(con, raw_vec)
-  invisible(con)
+  raw_vec <- hex_to_raw(x, endian = endian)
+  res <- write_raw(con, raw_vec)
+  
+  if (is.raw(con)) {
+    c(raw_orig, res)
+  } else {
+    invisible(con)
+  }
 }
 
 
