@@ -7,7 +7,8 @@
 read_hex(con, n = 1, size = 1, endian = NULL)
 }
 \arguments{
-\item{con}{Connection object created with \code{file()}, \code{url()}, 
+\item{con}{Connection object or raw vector. Connection objects can be 
+created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 

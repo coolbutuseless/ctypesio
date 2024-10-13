@@ -73,7 +73,9 @@ scan_str <- function(con, n = 1, quiet = TRUE, ...) {
 #'        written after each one.
 #' @param useBytes See \code{\link{writeLines}()}
 #' 
-#' @return The original connection is returned invisibly.
+#' @return If \code{con} is a connection then this connection is returned invisibly.
+#'         If \code{con} is a raw vector then new data is appended to this vector
+#"         and returned.
 #' @examples
 #' con <- rawConnection(raw(), "wb")
 #' fprintf(con, "%i,%6.2f", 1, 3.14159)
@@ -82,9 +84,20 @@ scan_str <- function(con, n = 1, quiet = TRUE, ...) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 fprintf <- function(con, fmt, ..., sep = "\n", useBytes = FALSE) {
-  fprintf_raw(con, fmt, ..., sep = sep, useBytes = useBytes)
+  
+  if (is.raw(con)) {
+    raw_orig <- con
+    con <- raw()
+  }
+  
+  res <- fprintf_raw(con, fmt, ..., sep = sep, useBytes = useBytes)
   write_raw(con, 0L) # Nul-terminator
-  invisible(con)
+  
+  if (is.raw(con)) {
+    c(raw_orig, res, as.raw(0))
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -93,9 +106,20 @@ fprintf <- function(con, fmt, ..., sep = "\n", useBytes = FALSE) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 fprintf_raw <- function(con, fmt, ..., sep = "\n", useBytes = FALSE) {
+  if (is.raw(con)) {
+    raw_orig <- con
+    con <- raw()
+  }
+  
   msg <- sprintf(fmt, ...)
-  writeLines(msg, con = con, sep = sep, useBytes = useBytes)
-  invisible(con)
+  # writeLines(msg, con = con, sep = sep, useBytes = useBytes)
+  res <- write_utf8_raw(con, msg)
+  
+  if (is.raw(con)) {
+    c(raw_orig, res)
+  } else {
+    invisible(con)
+  }
 }
 
 

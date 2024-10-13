@@ -10,14 +10,18 @@ write_utf8(con, x)
 write_utf8_raw(con, x)
 }
 \arguments{
-\item{con}{Connection object created with \code{file()}, \code{url()}, 
+\item{con}{Connection object or raw vector. When con is a raw vector, new
+data will be \emph{appended} to the vector and returned.
+Connection objects can be 
+created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
 \item{x}{single character string}
 }
 \value{
-The original connection is returned invisibly.
+If \code{con} is a connection then this connection is returned invisibly.
+        If \code{con} is a raw vector then new data is appended to this vector
 }
 \description{
 \code{write_utf8_raw()} writes the string without a nul-terminator.

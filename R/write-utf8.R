@@ -6,7 +6,9 @@
 #' 
 #' @inheritParams write_uint8
 #' 
-#' @return The original connection is returned invisibly.
+#' @return If \code{con} is a connection then this connection is returned invisibly.
+#'         If \code{con} is a raw vector then new data is appended to this vector
+#"         and returned.
 #' @examples
 #' con <- file(tempfile(), "wb")
 #' write_raw(con, as.raw(1:4))
@@ -23,10 +25,19 @@ write_raw <- function(con, x, bounds_check = NULL) {
     x <- as.raw(x)
   }
   
-  stopifnot(is.raw(x))
-  writeBin(x, con)
+  if (is.raw(con)) {
+    raw_orig <- con
+    con <- raw()
+  }
   
-  invisible(con)
+  stopifnot(is.raw(x))
+  res <- writeBin(x, con)
+  
+  if (is.raw(con)) {
+    c(raw_orig, res)
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -39,7 +50,9 @@ write_raw <- function(con, x, bounds_check = NULL) {
 #' @inheritParams write_uint8
 #' @param x single character string
 #' 
-#' @return The original connection is returned invisibly.
+#' @return If \code{con} is a connection then this connection is returned invisibly.
+#'         If \code{con} is a raw vector then new data is appended to this vector
+#"         and returned.
 #' @examples
 #' con <- file(tempfile(), "wb")
 #' write_utf8(con, "hello")
@@ -48,10 +61,20 @@ write_raw <- function(con, x, bounds_check = NULL) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_utf8 <- function(con, x) {
-  write_utf8_raw(con, x)
+  
+  if (is.raw(con)) {
+    raw_orig <- con
+    con <- raw()
+  }
+  
+  res <- write_utf8_raw(con, x)
   write_uint8(con, 0) # Null terminator
-
-  invisible(con)
+  
+  if (is.raw(con)) {
+    c(raw_orig, res, as.raw(0))
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -61,12 +84,21 @@ write_utf8 <- function(con, x) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_utf8_raw <- function(con, x) {
   stopifnot(is.character(x) && length(x) == 1)
+  
+  if (is.raw(con)) {
+    raw_orig <- con
+    con <- raw()
+  }
 
   xb <- iconv(x, to = "UTF-8", toRaw = TRUE)[[1]]
 
-  write_raw(con, xb)
-
-  invisible(con)
+  res <- write_raw(con, xb)
+  
+  if (is.raw(con)) {
+    c(raw_orig, res)
+  } else {
+    invisible(con)
+  }
 }
 
 

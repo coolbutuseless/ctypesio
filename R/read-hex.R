@@ -39,7 +39,9 @@ read_hex <- function(con, n = 1, size = 1, endian = NULL) {
 #' 
 #' @inheritParams write_uint8
 #' 
-#' @return The original connection is returned invisibly.
+#' @return If \code{con} is a connection then this connection is returned invisibly.
+#'         If \code{con} is a raw vector then new data is appended to this vector
+#"         and returned.
 #' @examples
 #' con <- file(tempfile(), "wb")
 #' write_hex(con, c("ff80", "0102"))

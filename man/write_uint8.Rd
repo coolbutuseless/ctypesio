@@ -28,7 +28,10 @@ write_uint64(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 write_int64(con, x, endian = NULL, bounds_check = NULL, na_check = NULL)
 }
 \arguments{
-\item{con}{Connection object created with \code{file()}, \code{url()}, 
+\item{con}{Connection object or raw vector. When con is a raw vector, new
+data will be \emph{appended} to the vector and returned.
+Connection objects can be 
+created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
@@ -54,7 +57,8 @@ this option should be retrieved from the connection object if possible
 will be set to \code{"error"}}
 }
 \value{
-The original connection is returned invisibly.
+If \code{con} is a connection then this connection is returned invisibly.
+        If \code{con} is a raw vector then new data is appended to this vector
 }
 \description{
 Convert values to the given type and write to a connection

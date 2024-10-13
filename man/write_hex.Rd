@@ -7,7 +7,10 @@
 write_hex(con, x, endian = NULL)
 }
 \arguments{
-\item{con}{Connection object created with \code{file()}, \code{url()}, 
+\item{con}{Connection object or raw vector. When con is a raw vector, new
+data will be \emph{appended} to the vector and returned.
+Connection objects can be 
+created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
@@ -21,7 +24,8 @@ endian option should be retrieved from the connection object if possible
 will be set to \code{"little"}}
 }
 \value{
-The original connection is returned invisibly.
+If \code{con} is a connection then this connection is returned invisibly.
+        If \code{con} is a raw vector then new data is appended to this vector
 }
 \description{
 Write hexadecimal string as raw bytes

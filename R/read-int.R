@@ -13,7 +13,8 @@
 #' }
 #' 
 #' @inheritParams write_uint8
-#' @param con Connection object created with \code{file()}, \code{url()}, 
+#' @param con Connection object or raw vector. Connection objects can be 
+#'        created with \code{file()}, \code{url()}, 
 #'        \code{rawConnection()} or any of the other many connection creation
 #'        functions.
 #' @param endian Ordering of bytes within the file when reading multi-byte values.

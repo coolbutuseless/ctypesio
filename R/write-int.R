@@ -60,12 +60,18 @@ int_size <- list(
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
   
+  if (is.raw(con)) {
+    # message(">>>>> convert: it's RAW")
+    raw_orig <- con
+    con      <- raw()
+  }
+  
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Figure out 
+  # Figure out settings for this connection
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  endian <- get_endian_method(con, endian)
+  endian       <- get_endian_method      (con, endian)
   bounds_check <- get_bounds_check_method(con, bounds_check)
-  na_check <- get_na_check_method(con, na_check)
+  na_check     <- get_na_check_method    (con, na_check)
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Determine size and type
@@ -86,8 +92,13 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     }
     
     x <- unclass(x)
-    write_dbl(con, x, bounds_check = FALSE)
-    return(con)
+    res <- write_dbl(con, x, bounds_check = FALSE)
+    
+    if (is.raw(con)) {
+      return(c(raw_orig, res))
+    } else {
+      return(con)
+    }
   }
   
   
@@ -113,8 +124,13 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     # Convert all hex to a single raw vector
     raw_vec <- hex_to_raw(x, endian = endian)
     
-    write_raw(con, raw_vec, bounds_check = FALSE)
-    return(con)
+    res <- write_raw(con, raw_vec, bounds_check = FALSE)
+    
+    if (is.raw(con)) {
+      return(c(raw_orig, res))
+    } else {
+      return(con)
+    }
   }
   
   
@@ -136,8 +152,13 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     raw_vec <- writeBin(x, raw(), size = width, endian = endian)
   }
   
-  writeBin(raw_vec, con)
-  con
+  res <- writeBin(raw_vec, con)
+  
+  if (is.raw(con)) {
+    return(c(raw_orig, res))
+  } else {
+    return(con)
+  }
 }
 
 
@@ -145,7 +166,12 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #' Convert values to the given type and write to a connection
 #' 
-#' @inheritParams read_uint8
+#' @param con Connection object or raw vector. When con is a raw vector, new
+#'        data will be \emph{appended} to the vector and returned.
+#'        Connection objects can be 
+#'        created with \code{file()}, \code{url()}, 
+#'        \code{rawConnection()} or any of the other many connection creation
+#'        functions.
 #' @param x vector to write
 #' @param bounds_check Check values lie within bounds of the given type.
 #'        Default: NULL indicates that
@@ -157,8 +183,16 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
 #'        this option should be retrieved from the connection object if possible
 #'        (where the user has used \code{\link{set_na_check}()}) or otherwise 
 #'        will be set to \code{"error"}
+#' @param endian Ordering of bytes within the file when reading multi-byte values.
+#'        Possible values: 'big' or 'little'.  
+#'        Default: NULL indicates that
+#'        endian option should be retrieved from the connection object if possible
+#'        (where the user has used \code{\link{set_endian}()}) or otherwise 
+#'        will be set to \code{"little"}
 #'        
-#' @return The original connection is returned invisibly.
+#' @return If \code{con} is a connection then this connection is returned invisibly.
+#'         If \code{con} is a raw vector then new data is appended to this vector
+#"         and returned.
 #' @examples
 #' con <- file(tempfile(), "wb")
 #' write_uint8(con, 1:4)
@@ -167,9 +201,14 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_uint8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='uint8' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='uint8' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -178,9 +217,14 @@ write_uint8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = N
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_int8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='int8' , endian = endian,
+  con <- convert_integer_core(con, x, type ='int8' , endian = endian,
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -190,9 +234,14 @@ write_int8 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NU
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_uint16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='uint16' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='uint16' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -201,9 +250,14 @@ write_uint16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_int16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='int16' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='int16' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -213,9 +267,14 @@ write_int16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = N
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_uint32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='uint32' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='uint32' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -224,9 +283,14 @@ write_uint32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_int32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='int32' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='int32' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -235,9 +299,14 @@ write_int32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = N
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_uint64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='uint64' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='uint64' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 
@@ -246,9 +315,14 @@ write_uint64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 write_int64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NULL) {
-  convert_integer_core(con, x, type ='int64' , endian = endian, 
+  con <- convert_integer_core(con, x, type ='int64' , endian = endian, 
                        bounds_check = bounds_check, na_check = na_check)
-  invisible(con)
+  
+  if (is.raw(con)) {
+    con
+  } else {
+    invisible(con)
+  }
 }
 
 

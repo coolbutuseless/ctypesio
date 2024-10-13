@@ -10,7 +10,10 @@ fprintf(con, fmt, ..., sep = "\\n", useBytes = FALSE)
 fprintf_raw(con, fmt, ..., sep = "\\n", useBytes = FALSE)
 }
 \arguments{
-\item{con}{Connection object created with \code{file()}, \code{url()}, 
+\item{con}{Connection object or raw vector. When con is a raw vector, new
+data will be \emph{appended} to the vector and returned.
+Connection objects can be 
+created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
@@ -24,7 +27,8 @@ written after each one.}
 \item{useBytes}{See \code{\link{writeLines}()}}
 }
 \value{
-The original connection is returned invisibly.
+If \code{con} is a connection then this connection is returned invisibly.
+        If \code{con} is a raw vector then new data is appended to this vector
 }
 \description{
 \code{fprintf_raw()} writes the text without a nul-terminator. \code{fprintf()}

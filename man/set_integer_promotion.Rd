@@ -8,7 +8,8 @@ larger that R's integer type i.e. uint32, uint64, int64}
 set_integer_promotion(con, uint32 = "dbl", int64 = "dbl", uint64 = "dbl")
 }
 \arguments{
-\item{con}{Connection object created with \code{file()}, \code{url()}, 
+\item{con}{Connection object or raw vector. Connection objects can be 
+created with \code{file()}, \code{url()}, 
 \code{rawConnection()} or any of the other many connection creation
 functions.}
 
