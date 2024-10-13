@@ -1,7 +1,7 @@
 Package: ctypesio
 Type: Package
 Title: Read and Write C Types
-Version: 0.1.0.9003
+Version: 0.1.0.9004
 Authors@R: c(
     person("Mike", "Cheng", role = c("aut", "cre", 'cph'), email = "mikefc@coolbutuseless.com"),
     person("Anne", "Fu", role = "ctb", comment = c("Better UTF-8 support", ORCID = "0000-0002-9025-6071"))
