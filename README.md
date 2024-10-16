@@ -6,11 +6,12 @@
 <!-- badges: start -->
 
 ![](https://img.shields.io/badge/cool-useless-green.svg)
+[![CRAN](http://www.r-pkg.org/badges/version/ctypesio)](https://cran.r-project.org/package=ctypesio)
 [![R-CMD-check](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`{ctypesio}` provides functions for reading/writing standard C types
-from connections.
+`{ctypesio}` is a package fore reading and writing standard C types from
+connections or raw vectors.
 
 Motivation: I wanted to be able to read/write some binary data files not
 currently supported by R. I needed more robust error-handling,
@@ -23,12 +24,11 @@ Key features:
 - Read 16, 32 and 64bit floating point values
 - Support for integer types which contain values outside the range of
   R’s integer type
-- Support for 16-bit floating point numbers.
 - Persistent information is stored on the connection for how to handle:
-  - Endianness
-  - Bounds checking
+  - endianness
+  - bounds checking
   - EOF behaviour
-  - NA checking
+  - `NA` checking
 
 ## What’s in the box
 
@@ -104,12 +104,25 @@ Key features:
 
 ## Installation
 
-You can install from
+This package can be installed from CRAN
+
+``` r
+install.packages('ctypesio')
+```
+
+You can install the latest development version from
 [GitHub](https://github.com/coolbutuseless/ctypesio) with:
 
 ``` r
-# install.packages('remotes')
+# install.package('remotes')
 remotes::install_github('coolbutuseless/ctypesio')
+```
+
+Pre-built source/binary versions can also be installed from
+[R-universe](https://r-universe.dev)
+
+``` r
+install.packages('ctypesio', repos = c('https://coolbutuseless.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ## Example: Parsing a JPEG file

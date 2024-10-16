@@ -1,4 +1,9 @@
-# ctypesio 0.1.1
+
+# ctypesio 0.1.1.9000
+
+* [9000] Post CRAN acceptance update
+
+# ctypesio 0.1.1  2024-10-10
 
 * Remove C code for integer64 handling. Instead, just treat as `double` 
   when reading/wrting from file and then add/remove `integer64` class []

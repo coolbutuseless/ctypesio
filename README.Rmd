@@ -19,6 +19,7 @@ library(ctypesio)
 
 <!-- badges: start -->
 ![](https://img.shields.io/badge/cool-useless-green.svg)
+[![CRAN](http://www.r-pkg.org/badges/version/ctypesio)](https://cran.r-project.org/package=ctypesio)
 [![R-CMD-check](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -109,11 +110,26 @@ Key features:
 
 ## Installation
 
-You can install from [GitHub](https://github.com/coolbutuseless/ctypesio) with:
+
+This package can be installed from CRAN
 
 ``` r
-# install.packages('remotes')
+install.packages('ctypesio')
+```
+
+You can install the latest development version from
+[GitHub](https://github.com/coolbutuseless/ctypesio) with:
+
+``` r
+# install.package('remotes')
 remotes::install_github('coolbutuseless/ctypesio')
+```
+
+Pre-built source/binary versions can also be installed from
+[R-universe](https://r-universe.dev)
+
+``` r
+install.packages('ctypesio', repos = c('https://coolbutuseless.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ## Example: Parsing a JPEG file
