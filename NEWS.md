@@ -2,6 +2,7 @@
 # ctypesio 0.1.1.9000
 
 * [9000] Post CRAN acceptance update
+* [9000] Fix for UTF8 read
 
 # ctypesio 0.1.1  2024-10-10
 
