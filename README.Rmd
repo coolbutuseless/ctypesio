@@ -19,7 +19,7 @@ library(ctypesio)
 
 <!-- badges: start -->
 ![](https://img.shields.io/badge/cool-useless-green.svg)
-[![CRAN](http://www.r-pkg.org/badges/version/ctypesio)](https://cran.r-project.org/package=ctypesio)
+[![CRAN](https://www.r-pkg.org/badges/version/ctypesio)](https://CRAN.R-project.org/package=ctypesio)
 [![R-CMD-check](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/ctypesio/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
