@@ -1,8 +1,10 @@
 
-# ctypesio 0.1.1.9000
+# ctypesio 0.1.1.9001
 
 * [9000] Post CRAN acceptance update
 * [9000] Fix for UTF8 read
+* [9001] Fix EOF check in `read_str_raw()`.  check number of raw bytes read, 
+  not number of characters in string.
 
 # ctypesio 0.1.1  2024-10-10
 
