@@ -24,6 +24,7 @@ write_f64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NUL
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   x <- as.double(x)
@@ -32,7 +33,9 @@ write_f64 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NUL
   res <- writeBin(x, con, size = 8, endian = endian)
   
   if (is.raw(con)) {
-    c(raw_orig, res)
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }
@@ -58,6 +61,7 @@ write_f32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NUL
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   x <- as.double(x)
@@ -70,7 +74,9 @@ write_f32 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NUL
   res <- writeBin(x, con, size = 4, endian = endian)
   
   if (is.raw(con)) {
-    c(raw_orig, res)
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }
@@ -95,6 +101,7 @@ write_f16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NUL
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   x <- as.double(x)
@@ -106,7 +113,9 @@ write_f16 <- function(con, x, endian = NULL, bounds_check = NULL, na_check = NUL
   res <- writeBin(raw_vec, con)
   
   if (is.raw(con)) {
-    c(raw_orig, res)
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }

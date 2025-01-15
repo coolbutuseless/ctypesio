@@ -64,6 +64,7 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     # message(">>>>> convert: it's RAW")
     raw_orig <- con
     con      <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,7 +96,9 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     res <- write_dbl(con, x, bounds_check = FALSE)
     
     if (is.raw(con)) {
-      return(c(raw_orig, res))
+      res <- c(raw_orig, res)
+      attributes(res) <- attributes(raw_orig)
+      return(res)
     } else {
       return(con)
     }
@@ -127,7 +130,9 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
     res <- write_raw(con, raw_vec, bounds_check = FALSE)
     
     if (is.raw(con)) {
-      return(c(raw_orig, res))
+      res <- c(raw_orig, res)
+      attributes(res) <- attributes(raw_orig)
+      return(res)
     } else {
       return(con)
     }
@@ -155,7 +160,9 @@ convert_integer_core <- function(con, x, type, endian, bounds_check, na_check) {
   res <- writeBin(raw_vec, con)
   
   if (is.raw(con)) {
-    return(c(raw_orig, res))
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     return(con)
   }

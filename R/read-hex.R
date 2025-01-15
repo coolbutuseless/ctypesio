@@ -55,13 +55,16 @@ write_hex <- function(con, x, endian = NULL) {
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   raw_vec <- hex_to_raw(x, endian = endian)
   res <- write_raw(con, raw_vec)
   
   if (is.raw(con)) {
-    c(raw_orig, res)
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }
