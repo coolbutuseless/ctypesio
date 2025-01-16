@@ -28,13 +28,16 @@ write_raw <- function(con, x, bounds_check = NULL) {
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   stopifnot(is.raw(x))
   res <- writeBin(x, con)
   
   if (is.raw(con)) {
-    c(raw_orig, res)
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }
@@ -65,13 +68,16 @@ write_utf8 <- function(con, x) {
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
   
   res <- write_utf8_raw(con, x)
   write_uint8(con, 0) # Null terminator
   
   if (is.raw(con)) {
-    c(raw_orig, res, as.raw(0))
+    res <- c(raw_orig, res, as.raw(0))
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }
@@ -88,6 +94,7 @@ write_utf8_raw <- function(con, x) {
   if (is.raw(con)) {
     raw_orig <- con
     con <- raw()
+    attributes(con) <- attributes(raw_orig)
   }
 
   xb <- iconv(x, to = "UTF-8", toRaw = TRUE)[[1]]
@@ -95,7 +102,9 @@ write_utf8_raw <- function(con, x) {
   res <- write_raw(con, xb)
   
   if (is.raw(con)) {
-    c(raw_orig, res)
+    res <- c(raw_orig, res)
+    attributes(res) <- attributes(raw_orig)
+    return(res)
   } else {
     invisible(con)
   }
