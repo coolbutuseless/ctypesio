@@ -32,6 +32,7 @@ write_raw <- function(con, x, bounds_check = NULL) {
   }
   
   stopifnot(is.raw(x))
+  attributes(x) <- NULL
   res <- writeBin(x, con)
   
   if (is.raw(con)) {

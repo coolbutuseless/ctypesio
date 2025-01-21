@@ -1,5 +1,9 @@
 
-# ctypesio 0.1.2
+# ctypesio 0.1.2.9000  2025-01-21
+
+* [9000] raw vector with attributes
+
+# ctypesio 0.1.2  2025-01-18
 
 * Fix for UTF8 reading
 * Fix EOF check in `read_str_raw()`.  check number of raw bytes read, 
