@@ -53,6 +53,9 @@ write_raw <- function(con, x, bounds_check = NULL) {
 #' 
 #' @inheritParams write_uint8
 #' @param x single character string
+#' @param from current encoding. Argument is passed to \code{iconv()}. 
+#'        Default: "" (empty string) works well for most inputs. 
+#'        See documentaiton for \code{iconv()} for more information.
 #' 
 #' @return If \code{con} is a connection then this connection is returned invisibly.
 #'         If \code{con} is a raw vector then new data is appended to this vector
@@ -64,7 +67,7 @@ write_raw <- function(con, x, bounds_check = NULL) {
 #' @family data output functions
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_utf8 <- function(con, x) {
+write_utf8 <- function(con, x, from = "") {
   
   if (is.raw(con)) {
     raw_orig <- con
@@ -72,7 +75,7 @@ write_utf8 <- function(con, x) {
     attributes(con) <- attributes(raw_orig)
   }
   
-  res <- write_utf8_raw(con, x)
+  res <- write_utf8_raw(con, x, from = from)
   write_uint8(con, 0) # Null terminator
   
   if (is.raw(con)) {
@@ -89,7 +92,7 @@ write_utf8 <- function(con, x) {
 #' @rdname write_utf8
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-write_utf8_raw <- function(con, x) {
+write_utf8_raw <- function(con, x, from = "") {
   stopifnot(is.character(x) && length(x) == 1)
   
   if (is.raw(con)) {
@@ -98,7 +101,11 @@ write_utf8_raw <- function(con, x) {
     attributes(con) <- attributes(raw_orig)
   }
 
-  xb <- iconv(x, to = "UTF-8", toRaw = TRUE)[[1]]
+  xb <- iconv(x, from = from, to = "UTF-8", toRaw = TRUE)[[1]]
+  if (is.null(xb)) {
+    stop("\nwrite_utf8_raw() failed to convert text with iconv(): ", x, 
+         "\n  May need to specify an explict 'from' encoding e.g. from = 'latin1'")
+  }
 
   res <- write_raw(con, xb)
   

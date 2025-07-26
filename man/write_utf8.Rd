@@ -5,9 +5,9 @@
 \alias{write_utf8_raw}
 \title{Write UTF8 string}
 \usage{
-write_utf8(con, x)
+write_utf8(con, x, from = "")
 
-write_utf8_raw(con, x)
+write_utf8_raw(con, x, from = "")
 }
 \arguments{
 \item{con}{Connection object or raw vector. When con is a raw vector, new
@@ -18,6 +18,10 @@ created with \code{file()}, \code{url()},
 functions.}
 
 \item{x}{single character string}
+
+\item{from}{current encoding. Argument is passed to \code{iconv()}. 
+Default: "" (empty string) works well for most inputs. 
+See documentaiton for \code{iconv()} for more information.}
 }
 \value{
 If \code{con} is a connection then this connection is returned invisibly.

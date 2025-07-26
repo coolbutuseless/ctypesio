@@ -1,7 +1,9 @@
 
-# ctypesio 0.1.2.9000  2025-01-21
+# ctypesio 0.1.2.9001  2025-07-26
 
 * [9000] raw vector with attributes
+* [9001] pass through the `from` argument for `iconv()` when 
+  writing utf8
 
 # ctypesio 0.1.2  2025-01-18
 
