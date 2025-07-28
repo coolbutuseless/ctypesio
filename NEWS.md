@@ -1,9 +1,10 @@
 
-# ctypesio 0.1.2.9001  2025-07-26
+# ctypesio 0.1.3  2025-07-28
 
-* [9000] raw vector with attributes
-* [9001] pass through the `from` argument for `iconv()` when 
-  writing utf8
+* [Bugfix] raw vector with attributes
+* [Feature] pass through the `from` argument for `iconv()` when 
+  writing utf8. Allows more flexibility if strings are not 
+  in plain ASCII or UTF-8 already
 
 # ctypesio 0.1.2  2025-01-18
 
